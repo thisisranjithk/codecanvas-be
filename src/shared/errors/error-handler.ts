@@ -20,6 +20,18 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
     return;
   }
 
+  if (err.name === 'MulterError') {
+    const message = err.code === 'LIMIT_FILE_SIZE'
+      ? 'File size exceeds the 2MB limit.'
+      : err.message;
+
+    res.status(HTTP_STATUS.BAD_REQUEST).json({
+      success: false,
+      message,
+    });
+    return;
+  }
+
   if (env.NODE_ENV === 'development') {
     console.error(err);
   }

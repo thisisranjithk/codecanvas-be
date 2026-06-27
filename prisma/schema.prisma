@@ -22,6 +22,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   profile   Profile?
+  media     Media[]
 }
 
 model Profile {
@@ -40,3 +41,22 @@ model Profile {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Media {
+  id           String   @id @default(cuid())
+  originalName String
+  publicId     String   @unique
+  url          String
+  secureUrl    String
+  resourceType String
+  format       String
+  width        Int?
+  height       Int?
+  bytes        Int
+  folder       String?
+  uploadedById String
+  uploadedBy   User     @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+

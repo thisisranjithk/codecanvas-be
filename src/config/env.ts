@@ -22,6 +22,10 @@ export const env = {
   DATABASE_URL: getRequiredEnv('DATABASE_URL'),
   JWT_ACCESS_SECRET: getRequiredEnv('JWT_ACCESS_SECRET'),
   JWT_ACCESS_EXPIRES_IN: getOptionalEnv('JWT_ACCESS_EXPIRES_IN', '15m'),
+  CLOUDINARY_CLOUD_NAME: getRequiredEnv('CLOUDINARY_CLOUD_NAME'),
+  CLOUDINARY_API_KEY: getRequiredEnv('CLOUDINARY_API_KEY'),
+  CLOUDINARY_API_SECRET: getRequiredEnv('CLOUDINARY_API_SECRET'),
+  CLOUDINARY_URL: getRequiredEnv('CLOUDINARY_URL'),
 } as const;
 
 export type Env = typeof env;
