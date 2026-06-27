@@ -213,11 +213,9 @@ project.controller.ts
 
 project.service.ts
 
-project.repository.ts
+project.schema.ts
 
-project.validation.ts
-
-project.types.ts
+project.docs.ts
 
 index.ts
 ```

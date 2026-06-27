@@ -1,6 +1,5 @@
 import { OpenAPIRegistry, OpenApiGeneratorV3 } from '@asteasolutions/zod-to-openapi';
 
-import { env } from './env.js';
 import { registerAuthDocs } from '../modules/auth/auth.docs.js';
 import { registerHealthDocs } from '../modules/health/health.docs.js';
 
