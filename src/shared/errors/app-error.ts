@@ -1,5 +1,5 @@
-import type { ApiErrorDetail } from '../types/api-response.js';
-import { HTTP_STATUS } from '../constants/http-status.js';
+import { HTTP_STATUS } from '../constants/index.js';
+import type { ApiErrorDetail } from '../types/index.js';
 
 export class AppError extends Error {
   readonly statusCode: number;

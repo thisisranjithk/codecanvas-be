@@ -1,6 +1,7 @@
 import express from 'express';
 
-import { errorHandler } from './shared/errors/error-handler.js';
+import { errorHandler } from './shared/errors/index.js';
+import './shared/types/express-request.js';
 import routes from './routes/index.js';
 
 const app = express();

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
-import { sendSuccess } from '../shared/responses/api-response.js';
+import { authRoutes } from '../modules/auth/index.js';
+import { sendSuccess } from '../shared/responses/index.js';
 
 const router = Router();
 
@@ -9,5 +10,7 @@ router.get('/health', (_req, res) => {
     status: 'healthy',
   });
 });
+
+router.use('/auth', authRoutes);
 
 export default router;

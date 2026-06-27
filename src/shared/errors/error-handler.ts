@@ -1,8 +1,8 @@
 import type { ErrorRequestHandler } from 'express';
 
-import { env } from '../../config/env.js';
-import { HTTP_STATUS } from '../constants/http-status.js';
-import type { ApiErrorResponse } from '../types/api-response.js';
+import { env } from '../../config/index.js';
+import { HTTP_STATUS } from '../constants/index.js';
+import type { ApiErrorResponse } from '../types/index.js';
 import { AppError } from './app-error.js';
 
 export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {

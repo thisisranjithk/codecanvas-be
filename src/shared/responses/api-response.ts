@@ -1,12 +1,12 @@
 import type { Response } from 'express';
 
-import { HTTP_STATUS } from '../constants/http-status.js';
+import { HTTP_STATUS } from '../constants/index.js';
 import type {
   ApiErrorDetail,
   ApiErrorResponse,
   ApiSuccessResponse,
-} from '../types/api-response.js';
-import type { PaginationMeta } from '../types/pagination.js';
+  PaginationMeta,
+} from '../types/index.js';
 
 export function sendSuccess<T>(
   res: Response,
