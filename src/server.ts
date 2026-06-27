@@ -1,7 +1,6 @@
+import { env } from './config/env.js';
 import app from './app.js';
 
-const PORT = Number(process.env.PORT) || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Portfolio CMS API running on port ${PORT}`);
+app.listen(env.PORT, () => {
+  console.log(`Portfolio CMS API running on port ${env.PORT}`);
 });
