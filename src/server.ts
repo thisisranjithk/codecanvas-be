@@ -1,3 +1,5 @@
+import './config/zod-openapi.js';
+
 import { env } from './config/index.js';
 import app from './app.js';
 
