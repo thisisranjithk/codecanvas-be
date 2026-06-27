@@ -2,6 +2,7 @@ import { OpenAPIRegistry, OpenApiGeneratorV3 } from '@asteasolutions/zod-to-open
 
 import { registerAuthDocs } from '../modules/auth/auth.docs.js';
 import { registerHealthDocs } from '../modules/health/health.docs.js';
+import { registerProfileDocs } from '../modules/profile/index.js';
 
 export const registry = new OpenAPIRegistry();
 
@@ -15,6 +16,7 @@ registry.registerComponent('securitySchemes', 'bearerAuth', {
 // Register module documentation
 registerAuthDocs(registry);
 registerHealthDocs(registry);
+registerProfileDocs(registry);
 
 export function generateOpenAPI() {
   const generator = new OpenApiGeneratorV3(registry.definitions);

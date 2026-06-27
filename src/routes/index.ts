@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import { authRoutes } from '../modules/auth/index.js';
+import { profileRoutes } from '../modules/profile/index.js';
 import { sendSuccess } from '../shared/responses/index.js';
 
 const router = Router();
@@ -12,5 +13,6 @@ router.get('/health', (_req, res) => {
 });
 
 router.use('/auth', authRoutes);
+router.use('/profile', profileRoutes);
 
 export default router;
