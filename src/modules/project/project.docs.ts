@@ -42,7 +42,7 @@ export function registerProjectDocs(registry: OpenAPIRegistry) {
   // POST /projects
   registry.registerPath({
     method: 'post',
-    path: '/projects',
+    path: '/api/v1/projects',
     tags: ['Projects'],
     summary: 'Create a new project',
     security: [{ bearerAuth: [] }],
@@ -90,7 +90,7 @@ export function registerProjectDocs(registry: OpenAPIRegistry) {
   // GET /projects
   registry.registerPath({
     method: 'get',
-    path: '/projects',
+    path: '/api/v1/projects',
     tags: ['Projects'],
     summary: 'List projects for authenticated user',
     security: [{ bearerAuth: [] }],
@@ -134,7 +134,7 @@ export function registerProjectDocs(registry: OpenAPIRegistry) {
   // GET /projects/{id}
   registry.registerPath({
     method: 'get',
-    path: '/projects/{id}',
+    path: '/api/v1/projects/{id}',
     tags: ['Projects'],
     summary: 'Get project by ID',
     security: [{ bearerAuth: [] }],
@@ -184,7 +184,7 @@ export function registerProjectDocs(registry: OpenAPIRegistry) {
   // PUT /projects/{id}
   registry.registerPath({
     method: 'put',
-    path: '/projects/{id}',
+    path: '/api/v1/projects/{id}',
     tags: ['Projects'],
     summary: 'Update project by ID',
     security: [{ bearerAuth: [] }],
@@ -249,7 +249,7 @@ export function registerProjectDocs(registry: OpenAPIRegistry) {
   // DELETE /projects/{id}
   registry.registerPath({
     method: 'delete',
-    path: '/projects/{id}',
+    path: '/api/v1/projects/{id}',
     tags: ['Projects'],
     summary: 'Delete project by ID',
     security: [{ bearerAuth: [] }],
