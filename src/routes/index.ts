@@ -3,6 +3,7 @@ import { Router } from 'express';
 import { authRoutes } from '../modules/auth/index.js';
 import { profileRoutes } from '../modules/profile/index.js';
 import { mediaRouter } from '../modules/media/index.js';
+import { projectRoutes } from '../modules/project/index.js';
 import { sendSuccess } from '../shared/responses/index.js';
 
 const router = Router();
@@ -16,5 +17,6 @@ router.get('/health', (_req, res) => {
 router.use('/auth', authRoutes);
 router.use('/profile', profileRoutes);
 router.use('/media', mediaRouter);
+router.use('/projects', projectRoutes);
 
 export default router;

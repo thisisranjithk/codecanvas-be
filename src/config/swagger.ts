@@ -4,6 +4,7 @@ import { registerAuthDocs } from '../modules/auth/auth.docs.js';
 import { registerHealthDocs } from '../modules/health/health.docs.js';
 import { registerProfileDocs } from '../modules/profile/index.js';
 import { registerMediaDocs } from '../modules/media/index.js';
+import { registerProjectDocs } from '../modules/project/index.js';
 
 export const registry = new OpenAPIRegistry();
 
@@ -19,6 +20,7 @@ registerAuthDocs(registry);
 registerHealthDocs(registry);
 registerProfileDocs(registry);
 registerMediaDocs(registry);
+registerProjectDocs(registry);
 
 export function generateOpenAPI() {
   const generator = new OpenApiGeneratorV3(registry.definitions);

@@ -12,17 +12,18 @@ enum UserRole {
 }
 
 model User {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   fullName  String
-  username  String   @unique
-  email     String   @unique
+  username  String    @unique
+  email     String    @unique
   password  String
-  role      UserRole @default(USER)
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      UserRole  @default(USER)
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   profile   Profile?
   media     Media[]
+  projects  Project[]
 }
 
 model Profile {
@@ -43,9 +44,9 @@ model Profile {
 }
 
 model Media {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   originalName String
-  publicId     String   @unique
+  publicId     String    @unique
   url          String
   secureUrl    String
   resourceType String
@@ -55,8 +56,35 @@ model Media {
   bytes        Int
   folder       String?
   uploadedById String
-  uploadedBy   User     @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  uploadedBy   User      @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  projects     Project[]
 }
 
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Project {
+  id           String        @id @default(cuid())
+  title        String
+  description  String
+  category     String
+  status       ProjectStatus @default(DRAFT)
+  technologies String[]
+  liveUrl      String?
+  githubUrl    String?
+  featured     Boolean       @default(false)
+
+  thumbnailMediaId String?
+  thumbnail        Media?  @relation(fields: [thumbnailMediaId], references: [id], onDelete: SetNull)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
