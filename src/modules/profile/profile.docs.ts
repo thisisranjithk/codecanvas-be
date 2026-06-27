@@ -14,7 +14,8 @@ const profileResponseSchema = z.object({
   linkedin: z.string().nullable().openapi({ example: 'https://linkedin.com/in/johndoe' }),
   twitter: z.string().nullable().openapi({ example: 'https://twitter.com/johndoe' }),
   website: z.string().nullable().openapi({ example: 'https://johndoe.com' }),
-  avatar: z.string().nullable().openapi({ example: null }),
+  avatar: z.string().nullable().openapi({ example: 'cmqwq73540001sossbo9bqclq' }),
+  avatarUrl: z.string().nullable().openapi({ example: 'https://res.cloudinary.com/.../image.jpg' }),
   createdAt: z.string().datetime().openapi({ example: '2023-12-18T10:00:00Z' }),
   updatedAt: z.string().datetime().openapi({ example: '2023-12-18T10:00:00Z' }),
 });

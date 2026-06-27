@@ -32,6 +32,14 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
     return;
   }
 
+  if (err instanceof SyntaxError && 'status' in err && err.status === 400 && 'body' in err) {
+    res.status(HTTP_STATUS.BAD_REQUEST).json({
+      success: false,
+      message: 'Invalid JSON payload format. Please check for syntax errors like trailing commas.',
+    });
+    return;
+  }
+
   if (env.NODE_ENV === 'development') {
     console.error(err);
   }

@@ -22,7 +22,20 @@ export async function createProfile(userId: string, data: CreateProfileInput) {
     data: createData,
   });
 
-  return profile;
+  let avatarUrl: string | null = null;
+  if (profile.avatar) {
+    const media = await prisma.media.findUnique({
+      where: { id: profile.avatar },
+    });
+    if (media) {
+      avatarUrl = media.secureUrl;
+    }
+  }
+
+  return {
+    ...profile,
+    avatarUrl,
+  };
 }
 
 export async function getProfileByUserId(userId: string) {
@@ -34,7 +47,20 @@ export async function getProfileByUserId(userId: string) {
     throw new NotFoundError('Profile not found.');
   }
 
-  return profile;
+  let avatarUrl: string | null = null;
+  if (profile.avatar) {
+    const media = await prisma.media.findUnique({
+      where: { id: profile.avatar },
+    });
+    if (media) {
+      avatarUrl = media.secureUrl;
+    }
+  }
+
+  return {
+    ...profile,
+    avatarUrl,
+  };
 }
 
 export async function updateProfile(userId: string, data: UpdateProfileInput) {
@@ -53,5 +79,18 @@ export async function updateProfile(userId: string, data: UpdateProfileInput) {
     data: updateData,
   });
 
-  return updatedProfile;
+  let avatarUrl: string | null = null;
+  if (updatedProfile.avatar) {
+    const media = await prisma.media.findUnique({
+      where: { id: updatedProfile.avatar },
+    });
+    if (media) {
+      avatarUrl = media.secureUrl;
+    }
+  }
+
+  return {
+    ...updatedProfile,
+    avatarUrl,
+  };
 }
