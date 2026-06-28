@@ -8,7 +8,7 @@ const projectStatusEnum = z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']);
 export const createProjectSchema = z.object({
   title: z.string().min(3).max(255).openapi({ example: 'My Awesome Project' }),
   description: z.string().min(10).openapi({ example: 'A comprehensive project describing my skills.' }),
-  category: z.string().min(2).openapi({ example: 'Web Development' }),
+  categoryId: z.string().cuid('Invalid category ID').openapi({ example: 'ckz1234567890' }),
   status: projectStatusEnum.optional().default('DRAFT').openapi({ example: 'PUBLISHED' }),
   technologies: z.array(z.string()).min(1).openapi({ example: ['React', 'Node.js', 'Prisma'] }),
   liveUrl: z.union([z.string().url(), z.literal('')]).nullish().openapi({ example: 'https://myproject.com' }),
@@ -20,7 +20,7 @@ export const createProjectSchema = z.object({
 export const updateProjectSchema = z.object({
   title: z.string().min(3).max(255).optional().openapi({ example: 'My Awesome Project' }),
   description: z.string().min(10).optional().openapi({ example: 'A comprehensive project describing my skills.' }),
-  category: z.string().min(2).optional().openapi({ example: 'Web Development' }),
+  categoryId: z.string().cuid('Invalid category ID').optional().openapi({ example: 'ckz1234567890' }),
   status: projectStatusEnum.optional().openapi({ example: 'PUBLISHED' }),
   technologies: z.array(z.string()).min(1).optional().openapi({ example: ['React', 'Node.js', 'Prisma'] }),
   liveUrl: z.union([z.string().url(), z.literal('')]).nullish().openapi({ example: 'https://myproject.com' }),
@@ -39,7 +39,7 @@ export const listProjectsQuerySchema = z.object({
   search: z.string().optional(),
   sortBy: z.string().optional().default('createdAt'),
   sortOrder: z.enum(['asc', 'desc']).optional().default('desc').openapi({ example: 'desc' }),
-  category: z.string().optional(),
+  categoryId: z.string().optional(),
   status: projectStatusEnum.optional(),
 });
 

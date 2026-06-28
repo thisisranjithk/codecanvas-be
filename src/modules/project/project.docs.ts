@@ -1,4 +1,4 @@
-import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
 
 import {
@@ -18,7 +18,11 @@ export function registerProjectDocs(registry: OpenAPIRegistry) {
     id: z.string().cuid(),
     title: z.string(),
     description: z.string(),
-    category: z.string(),
+    categoryId: z.string(),
+    category: z.object({
+      id: z.string(),
+      name: z.string(),
+    }),
     status: z.string(),
     technologies: z.array(z.string()),
     liveUrl: z.string().nullable(),

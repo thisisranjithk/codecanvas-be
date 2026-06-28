@@ -1,8 +1,9 @@
 import type { Prisma } from '@prisma/client';
 import { prisma } from '../../config/database.js';
 import { BadRequestError, NotFoundError, ForbiddenError } from '../../shared/errors/index.js';
-import { QueryBuilder, PaginationQuery } from '../../shared/utils/query-builder.js';
-import {
+import type { PaginationQuery } from '../../shared/utils/query-builder.js';
+import { QueryBuilder } from '../../shared/utils/query-builder.js';
+import type {
   CreateProjectInput,
   UpdateProjectInput,
   ListProjectsQueryInput,
@@ -22,7 +23,7 @@ export const createProject = async (userId: string, data: CreateProjectInput) =>
   const projectData: Prisma.ProjectUncheckedCreateInput = {
     title: data.title,
     description: data.description,
-    category: data.category,
+    categoryId: data.categoryId,
     status: data.status,
     technologies: data.technologies,
     featured: data.featured,
@@ -41,11 +42,11 @@ export const createProject = async (userId: string, data: CreateProjectInput) =>
 };
 
 export const getProjects = async (userId: string, query: ListProjectsQueryInput) => {
-  const { page, limit, search, sortBy, sortOrder, category, status } = query;
+  const { page, limit, search, sortBy, sortOrder, categoryId, status } = query;
 
   const filters: Prisma.ProjectWhereInput = { userId };
 
-  if (category) filters.category = category;
+  if (categoryId) filters.categoryId = categoryId;
   if (status) filters.status = status;
 
   const paginationQuery: PaginationQuery = {
@@ -78,6 +79,12 @@ export const getProjects = async (userId: string, query: ListProjectsQueryInput)
             publicId: true,
           },
         },
+        category: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     }),
   ]);
@@ -98,6 +105,12 @@ export const getProjectById = async (userId: string, projectId: string) => {
           url: true,
           secureUrl: true,
           publicId: true,
+        },
+      },
+      category: {
+        select: {
+          id: true,
+          name: true,
         },
       },
     },
@@ -135,7 +148,7 @@ export const updateProject = async (
 
   if (data.title !== undefined) updateData.title = data.title;
   if (data.description !== undefined) updateData.description = data.description;
-  if (data.category !== undefined) updateData.category = data.category;
+  if (data.categoryId !== undefined) updateData.categoryId = data.categoryId;
   if (data.status !== undefined) updateData.status = data.status;
   if (data.technologies !== undefined) updateData.technologies = data.technologies;
   if (data.featured !== undefined) updateData.featured = data.featured;

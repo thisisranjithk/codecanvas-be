@@ -3,7 +3,7 @@ import type { Request, Response } from 'express';
 import { asyncHandler } from '../../shared/utils/index.js';
 import { sendSuccess } from '../../shared/responses/index.js';
 import * as skillService from './skill.service.js';
-import {
+import type {
   CreateSkillInput,
   UpdateSkillInput,
 } from './skill.schema.js';

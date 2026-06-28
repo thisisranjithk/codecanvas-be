@@ -1,4 +1,4 @@
-import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
 
 import {
@@ -16,7 +16,11 @@ export function registerSkillDocs(registry: OpenAPIRegistry) {
   const skillResponseSchema = z.object({
     id: z.string().cuid(),
     name: z.string(),
-    category: z.string(),
+    categoryId: z.string(),
+    category: z.object({
+      id: z.string(),
+      name: z.string(),
+    }),
     proficiency: z.number().int(),
     yearsOfExperience: z.number().int(),
     displayOrder: z.number().int(),

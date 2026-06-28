@@ -15,6 +15,14 @@ export async function createSkill(userId: string, data: CreateSkillInput) {
 export async function getSkills(userId: string) {
   return prisma.skill.findMany({
     where: { userId },
+    include: {
+      category: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
     orderBy: { displayOrder: 'asc' },
   });
 }
@@ -22,6 +30,14 @@ export async function getSkills(userId: string) {
 export async function getSkillById(userId: string, id: string) {
   const skill = await prisma.skill.findUnique({
     where: { id },
+    include: {
+      category: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
   });
 
   if (!skill) {
@@ -40,7 +56,7 @@ export async function updateSkill(userId: string, id: string, data: UpdateSkillI
 
   const updateData: Prisma.SkillUncheckedUpdateInput = {};
   if (data.name !== undefined) updateData.name = data.name;
-  if (data.category !== undefined) updateData.category = data.category;
+  if (data.categoryId !== undefined) updateData.categoryId = data.categoryId;
   if (data.proficiency !== undefined) updateData.proficiency = data.proficiency;
   if (data.yearsOfExperience !== undefined) updateData.yearsOfExperience = data.yearsOfExperience;
   if (data.displayOrder !== undefined) updateData.displayOrder = data.displayOrder;

@@ -1,10 +1,9 @@
 import { Router } from 'express';
-import { mediaController } from './media.controller.js';
+import * as mediaController from './media.controller.js';
 import { authenticate } from '../../shared/middleware/authenticate.js';
 import { upload } from '../../shared/middleware/upload.js';
 import { validate } from '../../shared/middleware/validate.js';
 import { UploadMediaSchema } from './media.schema.js';
-import { asyncHandler } from '../../shared/utils/async-handler.js';
 
 const router = Router();
 
@@ -15,17 +14,17 @@ router.post(
   '/upload',
   upload.single('file'),
   validate(UploadMediaSchema),
-  asyncHandler(mediaController.uploadMedia)
+  mediaController.uploadMediaHandler
 );
 
 router.get(
   '/:id',
-  asyncHandler(mediaController.getMedia)
+  mediaController.getMediaHandler
 );
 
 router.delete(
   '/:id',
-  asyncHandler(mediaController.deleteMedia)
+  mediaController.deleteMediaHandler
 );
 
 export const mediaRouter = router;

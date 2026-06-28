@@ -3,7 +3,7 @@ import type { Request, Response } from 'express';
 import { asyncHandler } from '../../shared/utils/index.js';
 import { sendSuccess } from '../../shared/responses/index.js';
 import * as projectService from './project.service.js';
-import {
+import type {
   CreateProjectInput,
   UpdateProjectInput,
   ListProjectsQueryInput,
