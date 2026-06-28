@@ -50,6 +50,7 @@ model User {
   skills    Skill[]
   experiences Experience[]
   educations Education[]
+  certifications Certification[]
 }
 
 model Profile {
@@ -86,6 +87,7 @@ model Media {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   projects     Project[]
+  certifications Certification[]
 }
 
 enum ProjectStatus {
@@ -174,3 +176,21 @@ model Education {
   updatedAt    DateTime  @updatedAt
 }
 
+model Certification {
+  id                 String    @id @default(cuid())
+  name               String
+  issuer             String
+  issueDate          DateTime
+  expiryDate         DateTime?
+  credentialId       String?
+  verificationUrl    String?
+  certificateMediaId String?
+  certificateMedia   Media?    @relation(fields: [certificateMediaId], references: [id], onDelete: SetNull)
+  displayOrder       Int       @default(0)
+
+  userId             String
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
