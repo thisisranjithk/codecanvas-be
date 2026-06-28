@@ -4,8 +4,7 @@ import { z } from 'zod';
 import {
   createProjectSchema,
   updateProjectSchema,
-  getProjectSchema,
-  deleteProjectSchema,
+  projectIdParamSchema,
   listProjectsQuerySchema,
 } from './project.schema.js';
 
@@ -50,7 +49,7 @@ export function registerProjectDocs(registry: OpenAPIRegistry) {
       body: {
         content: {
           'application/json': {
-            schema: createProjectSchema.shape.body,
+            schema: createProjectSchema,
           },
         },
       },
@@ -95,7 +94,7 @@ export function registerProjectDocs(registry: OpenAPIRegistry) {
     summary: 'List projects for authenticated user',
     security: [{ bearerAuth: [] }],
     request: {
-      query: listProjectsQuerySchema.shape.query,
+      query: listProjectsQuerySchema,
     },
     responses: {
       200: {
@@ -139,7 +138,7 @@ export function registerProjectDocs(registry: OpenAPIRegistry) {
     summary: 'Get project by ID',
     security: [{ bearerAuth: [] }],
     request: {
-      params: getProjectSchema.shape.params,
+      params: projectIdParamSchema,
     },
     responses: {
       200: {
@@ -189,11 +188,11 @@ export function registerProjectDocs(registry: OpenAPIRegistry) {
     summary: 'Update project by ID',
     security: [{ bearerAuth: [] }],
     request: {
-      params: updateProjectSchema.shape.params,
+      params: projectIdParamSchema,
       body: {
         content: {
           'application/json': {
-            schema: updateProjectSchema.shape.body,
+            schema: updateProjectSchema,
           },
         },
       },
@@ -254,7 +253,7 @@ export function registerProjectDocs(registry: OpenAPIRegistry) {
     summary: 'Delete project by ID',
     security: [{ bearerAuth: [] }],
     request: {
-      params: deleteProjectSchema.shape.params,
+      params: projectIdParamSchema,
     },
     responses: {
       200: {

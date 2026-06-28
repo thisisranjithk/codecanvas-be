@@ -19,7 +19,12 @@ export function validate(schema: ZodType, source: ValidationSource = 'body'): Re
       return;
     }
 
-    req[source] = result.data;
+    Object.defineProperty(req, source, {
+      value: result.data,
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    });
     next();
   };
 }

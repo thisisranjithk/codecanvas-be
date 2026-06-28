@@ -28,10 +28,10 @@ export const createProject = async (userId: string, data: CreateProjectInput) =>
     featured: data.featured,
     userId,
   };
-  
-  if (data.liveUrl !== undefined) projectData.liveUrl = data.liveUrl ?? null;
-  if (data.githubUrl !== undefined) projectData.githubUrl = data.githubUrl ?? null;
-  if (data.thumbnailMediaId !== undefined) projectData.thumbnailMediaId = data.thumbnailMediaId ?? null;
+
+  if (data.liveUrl !== undefined) projectData.liveUrl = data.liveUrl || null;
+  if (data.githubUrl !== undefined) projectData.githubUrl = data.githubUrl || null;
+  if (data.thumbnailMediaId !== undefined) projectData.thumbnailMediaId = data.thumbnailMediaId || null;
 
   const project = await prisma.project.create({
     data: projectData,
@@ -132,16 +132,16 @@ export const updateProject = async (
   }
 
   const updateData: Prisma.ProjectUncheckedUpdateInput = {};
-  
+
   if (data.title !== undefined) updateData.title = data.title;
   if (data.description !== undefined) updateData.description = data.description;
   if (data.category !== undefined) updateData.category = data.category;
   if (data.status !== undefined) updateData.status = data.status;
   if (data.technologies !== undefined) updateData.technologies = data.technologies;
   if (data.featured !== undefined) updateData.featured = data.featured;
-  if (data.liveUrl !== undefined) updateData.liveUrl = data.liveUrl ?? null;
-  if (data.githubUrl !== undefined) updateData.githubUrl = data.githubUrl ?? null;
-  if (data.thumbnailMediaId !== undefined) updateData.thumbnailMediaId = data.thumbnailMediaId ?? null;
+  if (data.liveUrl !== undefined) updateData.liveUrl = data.liveUrl || null;
+  if (data.githubUrl !== undefined) updateData.githubUrl = data.githubUrl || null;
+  if (data.thumbnailMediaId !== undefined) updateData.thumbnailMediaId = data.thumbnailMediaId || null;
 
   const updatedProject = await prisma.project.update({
     where: { id: project.id },

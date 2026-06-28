@@ -5,8 +5,7 @@ import * as projectController from './project.controller.js';
 import {
   createProjectSchema,
   updateProjectSchema,
-  getProjectSchema,
-  deleteProjectSchema,
+  projectIdParamSchema,
   listProjectsQuerySchema,
 } from './project.schema.js';
 
@@ -23,24 +22,25 @@ projectRoutes.post(
 
 projectRoutes.get(
   '/',
-  validate(listProjectsQuerySchema),
+  validate(listProjectsQuerySchema, 'query'),
   projectController.getProjectsHandler
 );
 
 projectRoutes.get(
   '/:id',
-  validate(getProjectSchema),
+  validate(projectIdParamSchema, 'params'),
   projectController.getProjectHandler
 );
 
 projectRoutes.put(
   '/:id',
-  validate(updateProjectSchema),
+  validate(projectIdParamSchema, 'params'),
+  validate(updateProjectSchema, 'body'),
   projectController.updateProjectHandler
 );
 
 projectRoutes.delete(
   '/:id',
-  validate(deleteProjectSchema),
+  validate(projectIdParamSchema, 'params'),
   projectController.deleteProjectHandler
 );
