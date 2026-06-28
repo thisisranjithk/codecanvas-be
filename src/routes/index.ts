@@ -7,6 +7,7 @@ import { projectRoutes } from '../modules/project/index.js';
 import { skillRoutes } from '../modules/skill/index.js';
 import { categoryRoutes } from '../modules/category/index.js';
 import { experienceRoutes } from '../modules/experience/index.js';
+import { educationRoutes } from '../modules/education/index.js';
 import { sendSuccess } from '../shared/responses/index.js';
 
 const router = Router();
@@ -24,5 +25,6 @@ router.use('/projects', projectRoutes);
 router.use('/skills', skillRoutes);
 router.use('/categories', categoryRoutes);
 router.use('/experiences', experienceRoutes);
+router.use('/educations', educationRoutes);
 
 export default router;

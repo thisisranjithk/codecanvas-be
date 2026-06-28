@@ -49,6 +49,7 @@ model User {
   projects  Project[]
   skills    Skill[]
   experiences Experience[]
+  educations Education[]
 }
 
 model Profile {
@@ -152,3 +153,24 @@ model Experience {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 }
+
+model Education {
+  id           String    @id @default(cuid())
+  institution  String
+  degree       String
+  fieldOfStudy String
+  startDate    DateTime
+  endDate      DateTime?
+  gpa          String?
+  location     String?
+  description  String?
+  activities   String[]
+  displayOrder Int       @default(0)
+
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
