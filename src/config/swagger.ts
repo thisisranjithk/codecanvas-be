@@ -11,6 +11,7 @@ import { registerExperienceDocs } from '../modules/experience/index.js';
 import { registerEducationDocs } from '../modules/education/index.js';
 import { registerCertificationDocs } from '../modules/certification/index.js';
 import { registerBlogDocs } from '../modules/blog/index.js';
+import { registerPortfolioDocs } from '../modules/portfolio/index.js';
 
 export const registry = new OpenAPIRegistry();
 
@@ -33,6 +34,7 @@ registerExperienceDocs(registry);
 registerEducationDocs(registry);
 registerCertificationDocs(registry);
 registerBlogDocs(registry);
+registerPortfolioDocs(registry);
 
 export function generateOpenAPI() {
   const generator = new OpenApiGeneratorV3(registry.definitions);

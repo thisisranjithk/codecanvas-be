@@ -1,37 +1,29 @@
+# 03 - Project Structure
+
 # Project Structure
 
 ## Purpose
 
-This document defines the official project structure for the Portfolio CMS API.
+This document defines the official folder structure and organization of the Portfolio CMS API.
 
-Its purpose is to ensure consistency across the codebase by establishing clear conventions for organizing files, modules, and shared resources.
-
-Every new feature must follow this structure.
+Every new feature, shared utility, and configuration file must follow this structure to maintain consistency across the project.
 
 ---
 
-# High-Level Directory Structure
+# Root Structure
 
 ```text
 portfolio-cms-api/
-│
-├── docs/
-│
-├── prisma/
-│
-├── src/
-│   ├── config/
-│   ├── modules/
-│   ├── shared/
-│   ├── routes/
-│   ├── app.ts
-│   └── server.ts
-│
-├── .env
-├── .env.example
-├── package.json
-├── tsconfig.json
-└── README.md
+
+docs/
+features/
+prisma/
+src/
+
+.env
+package.json
+tsconfig.json
+README.md
 ```
 
 ---
@@ -40,68 +32,101 @@ portfolio-cms-api/
 
 ## docs/
 
-Contains all project documentation.
+Contains the permanent project documentation.
 
-Examples
+Examples:
 
-- Architecture
-- API Guidelines
-- Database Design
-- Development Workflow
+* Project Overview
+* Tech Stack
+* Architecture
+* API Guidelines
+* Development Rules
 
-Documentation must remain synchronized with implementation decisions.
+These documents describe the project, not feature implementations.
+
+---
+
+## features/
+
+Contains implementation prompts and feature specifications.
+
+Each feature represents one development milestone.
+
+Examples:
+
+```text
+001-project-foundation.md
+
+010-projects.md
+
+017-public-portfolio-api.md
+```
+
+These files are used during development and are independent of the runtime application.
 
 ---
 
 ## prisma/
 
-Contains all Prisma-related files.
+Contains all database-related resources.
 
-Examples
+Examples:
 
-- schema.prisma
-- migrations
-- seed scripts (future)
+```text
+schema.prisma
 
-Only Prisma resources belong in this directory.
+migrations/
+```
+
+Only Prisma files belong here.
 
 ---
 
 ## src/
 
-Contains all application source code.
+Contains the application source code.
 
-No documentation or configuration files should be placed here.
+Every runtime component belongs inside this directory.
 
 ---
 
-# Source Directory Structure
+# Source Structure
 
 ```text
 src/
-│
-├── config/
-├── modules/
-├── shared/
-├── routes/
-├── app.ts
-└── server.ts
+
+config/
+
+modules/
+
+routes/
+
+shared/
+
+app.ts
+
+server.ts
 ```
 
 ---
 
 # config/
 
-Contains application configuration.
+Application configuration.
 
-Examples
+Examples:
 
-- Environment configuration
-- Database configuration
-- Logger configuration
-- Swagger configuration (future)
+```text
+database.ts
 
-Configuration files should not contain business logic.
+env.ts
+
+swagger.ts
+
+cloudinary.ts
+```
+
+Configuration files should never contain business logic.
 
 ---
 
@@ -109,132 +134,120 @@ Configuration files should not contain business logic.
 
 Contains all business modules.
 
-Each feature owns its own implementation.
+Each module owns its own implementation.
 
-Example
+Current modules:
 
 ```text
-modules/
-
 auth/
 
 profile/
 
-projects/
+media/
 
-skills/
+project/
+
+skill/
+
+category/
 
 experience/
 
 education/
 
-certifications/
+certification/
 
 blog/
 
-dashboard/
-
-settings/
-
 portfolio/
 
-analytics/
+health/
 ```
 
-No module should depend directly on another module's internal files.
+New business features should always be created inside this directory.
 
 ---
 
 # Module Structure
 
-Each module follows the same structure.
+Every module follows the same structure.
 
 ```text
-projects/
+module/
 
-project.routes.ts
+module.route.ts
 
-project.controller.ts
+module.controller.ts
 
-project.service.ts
+module.service.ts
 
-project.repository.ts
+module.schema.ts
 
-project.validation.ts
-
-project.types.ts
-
-index.ts
+module.docs.ts
 ```
 
-Additional files may be added only when justified by feature complexity.
+Responsibilities:
 
-Examples
+* route → Register endpoints
+* controller → Handle HTTP requests
+* service → Business logic
+* schema → Zod validation
+* docs → Swagger documentation
 
-```text
-project.mapper.ts
-
-project.constants.ts
-
-project.utils.ts
-```
-
-Avoid creating unnecessary files.
-
----
-
-# shared/
-
-Contains reusable application components.
-
-Examples
-
-```text
-shared/
-
-middleware/
-
-errors/
-
-constants/
-
-utils/
-
-types/
-
-responses/
-
-validators/
-```
-
-The shared directory must never contain business-specific logic.
-
-If a piece of code belongs only to one feature, it should remain inside that feature module.
+Avoid creating additional files unless they provide clear value.
 
 ---
 
 # routes/
 
-Contains the application's root route registration.
+Registers all feature routes.
 
-Responsibilities
+Responsibilities:
 
-- Combine feature routes
-- Register API version
-- Export root router
+* Combine module routes
+* Apply API version prefix
+* Export the root router
 
-Feature routes should not be defined here.
+Business logic must never exist here.
+
+---
+
+# shared/
+
+Contains reusable components shared across multiple modules.
+
+Current structure:
+
+```text
+shared/
+
+constants/
+
+errors/
+
+middleware/
+
+responses/
+
+types/
+
+utils/
+```
+
+Only reusable code belongs here.
+
+Business-specific logic should remain inside its module.
 
 ---
 
 # app.ts
 
-Responsibilities
+Responsible for:
 
-- Create Express application
-- Register middleware
-- Register routes
-- Configure error handling
+* Creating the Express application
+* Registering middleware
+* Registering routes
+* Configuring global error handling
 
 No server startup logic belongs here.
 
@@ -242,47 +255,54 @@ No server startup logic belongs here.
 
 # server.ts
 
-Responsibilities
+Responsible for:
 
-- Load environment variables
-- Start HTTP server
-- Handle graceful shutdown
-
-No application configuration belongs here.
+* Loading environment variables
+* Connecting to the database
+* Starting the HTTP server
+* Handling graceful shutdown
 
 ---
 
 # Naming Conventions
 
-Directories
+## Directories
 
-Use lowercase.
+Use lowercase singular feature names.
 
-Example
+Examples:
 
 ```text
-projects
-shared
-middleware
+project
+
+skill
+
+blog
+
+media
 ```
 
 ---
 
-Files
+## Files
 
-Use feature-based naming.
+Follow feature-based naming.
 
-Examples
+Examples:
 
 ```text
+project.route.ts
+
 project.controller.ts
 
 project.service.ts
 
-project.repository.ts
+project.schema.ts
+
+project.docs.ts
 ```
 
-Avoid generic file names such as
+Avoid generic names such as:
 
 ```text
 controller.ts
@@ -292,154 +312,27 @@ service.ts
 
 ---
 
-Variables
+# Shared Code Rules
 
-Use camelCase.
+Before moving code into `shared/`, ask:
 
-Example
+* Is it reused by multiple modules?
+* Is it independent of business logic?
 
-```ts
-projectRepository;
-
-userProfile;
-
-accessToken;
-```
-
----
-
-Functions
-
-Use descriptive verbs.
-
-Examples
-
-```ts
-createProject();
-
-updateProfile();
-
-publishBlog();
-
-changePassword();
-```
-
-Avoid generic names.
-
-```ts
-save();
-
-process();
-
-handle();
-```
-
----
-
-Interfaces
-
-Prefix with "I" is not required.
-
-Preferred
-
-```ts
-Project;
-
-CreateProjectRequest;
-
-ProjectRepository;
-```
-
----
-
-Enums
-
-Use PascalCase.
-
-Example
-
-```ts
-ProjectStatus;
-
-UserRole;
-
-BlogCategory;
-```
-
----
-
-Constants
-
-Use UPPER_SNAKE_CASE.
-
-Example
-
-```ts
-MAX_FILE_SIZE;
-
-DEFAULT_PAGE_SIZE;
-
-JWT_EXPIRATION;
-```
-
----
-
-# Import Order
-
-Imports should always follow this order.
-
-1. External packages
-2. Internal shared modules
-3. Feature modules
-4. Relative imports
-
-Group imports together.
-
-Avoid scattered imports throughout the file.
-
----
-
-# Module Independence
-
-Every module should be independently maintainable.
-
-A module may expose only its public interface.
-
-Internal implementation details must remain private.
-
-Modules communicate through exported services only when necessary.
-
----
-
-# Shared Code Guidelines
-
-Before adding code to the shared directory, ask:
-
-- Will this be reused by multiple modules?
-- Is it independent of business rules?
-
-If the answer is "No", keep it inside the module.
-
----
-
-# File Size Guidelines
-
-Aim for focused, readable files.
-
-Recommended limits
-
-- Controller: ≤ 150 lines
-- Service: ≤ 300 lines
-- Repository: ≤ 200 lines
-
-If a file grows significantly beyond these guidelines, consider extracting responsibilities.
-
-These are guidelines, not strict limits.
+If the answer is **No**, keep it inside the feature module.
 
 ---
 
 # Project Growth
 
-As the application grows, new modules should follow the existing conventions without changing the project structure.
+When adding a new feature:
 
-Consistency is more important than introducing new organizational patterns.
+1. Create a new module inside `src/modules`.
+2. Follow the standard module structure.
+3. Register the routes.
+4. Add Swagger documentation.
+5. Update the relevant feature specification if needed.
+
+Do not introduce new architectural patterns unless they apply across the entire project.
+
+

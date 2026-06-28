@@ -12,7 +12,7 @@ export const createProfileSchema = z.object({
   linkedin: z.string().url().max(200).optional().openapi({ example: 'https://linkedin.com/in/johndoe' }),
   twitter: z.string().url().max(200).optional().openapi({ example: 'https://twitter.com/johndoe' }),
   website: z.string().url().max(200).optional().openapi({ example: 'https://johndoe.com' }),
-  avatar: z.string().optional().openapi({ example: 'cuid_of_media_record' }),
+  avatar: z.string().optional(),
 }).openapi('CreateProfileRequest');
 
 export const updateProfileSchema = z.object({
@@ -24,7 +24,7 @@ export const updateProfileSchema = z.object({
   linkedin: z.string().url().max(200).optional().or(z.literal('')),
   twitter: z.string().url().max(200).optional().or(z.literal('')),
   website: z.string().url().max(200).optional().or(z.literal('')),
-  avatar: z.string().optional().or(z.literal('')),
+  avatar: z.string().optional(),
 }).openapi('UpdateProfileRequest');
 
 export type CreateProfileInput = z.infer<typeof createProfileSchema>;

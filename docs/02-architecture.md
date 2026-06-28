@@ -1,74 +1,48 @@
+# 02 - Architecture
+
 # Backend Architecture
 
 ## Purpose
 
-This document defines the architectural principles for the Portfolio CMS API.
+This document defines the architectural principles of the Portfolio CMS API.
 
-The goal is to build a scalable, maintainable, and production-ready backend that follows clean separation of responsibilities while remaining simple enough for long-term maintenance.
+Its purpose is to ensure every feature follows the same design patterns, responsibilities, and coding conventions.
 
-Every implementation must follow the architecture defined in this document.
+All implementation decisions must align with this document.
 
 ---
 
 # Architectural Style
 
-The project follows a Feature-Based Modular Architecture inspired by Clean Architecture.
+The application follows a **Feature-First Modular Architecture**.
 
-The application is organized around business features instead of technical layers.
+Each business capability is implemented as an independent module that owns its routes, controllers, services, validation, and API documentation.
 
-Each feature owns its own routes, controllers, services, validation, and repository.
-
-This minimizes coupling and keeps related code together.
+Modules should be cohesive, loosely coupled, and independently maintainable.
 
 ---
 
-# High-Level Architecture
+# Core Principles
 
-```
-                Client
+The architecture is built on the following principles:
 
-                  │
-
-            Express Router
-
-                  │
-
-             Route Layer
-
-                  │
-
-          Controller Layer
-
-                  │
-
-            Service Layer
-
-                  │
-
-          Repository Layer
-
-                  │
-
-             Prisma Client
-
-                  │
-
-             PostgreSQL
-```
-
-Each layer has a single responsibility.
-
-Dependencies always flow downward.
-
-Lower layers never depend on higher layers.
+* Feature-first organization
+* Single Responsibility Principle
+* Separation of Concerns
+* Type Safety
+* Reusability
+* Ownership-based authorization
+* Consistent API contracts
+* Thin controllers
+* Business logic inside services
 
 ---
 
 # Request Lifecycle
 
-Every incoming request follows the same lifecycle.
+Every request follows the same execution flow.
 
-```
+```text
 HTTP Request
 
 ↓
@@ -81,261 +55,6 @@ Authentication (if required)
 
 ↓
 
-Validation
-
-↓
-
-Controller
-
-↓
-
-Service
-
-↓
-
-Repository
-
-↓
-
-Database
-
-↓
-
-Service
-
-↓
-
-Controller
-
-↓
-
-HTTP Response
-```
-
-No business logic should exist outside this flow.
-
----
-
-# Layer Responsibilities
-
-## Route Layer
-
-Responsibilities
-
-- Register endpoints
-- Apply middleware
-- Delegate to controllers
-
-Must Not
-
-- Access the database
-- Contain business logic
-- Validate business rules
-
----
-
-## Controller Layer
-
-Responsibilities
-
-- Receive request
-- Extract request data
-- Call service
-- Return formatted response
-
-Must Not
-
-- Execute business logic
-- Write database queries
-- Perform complex validation
-
-Controllers should remain thin.
-
----
-
-## Service Layer
-
-Responsibilities
-
-- Implement business logic
-- Coordinate multiple repositories
-- Execute business rules
-- Throw domain-specific errors
-
-The service layer is the heart of the application.
-
-Most application logic belongs here.
-
----
-
-## Repository Layer
-
-Responsibilities
-
-- Communicate with Prisma
-- Execute database operations
-- Return domain objects
-
-Must Not
-
-- Contain business rules
-- Format API responses
-- Access Express request or response objects
-
-Repositories are responsible only for persistence.
-
----
-
-## Validation Layer
-
-Responsibilities
-
-- Validate incoming requests
-- Define reusable schemas
-- Parse request payloads
-
-Validation must happen before reaching the controller.
-
----
-
-# Module Structure
-
-Each business feature is implemented as an independent module.
-
-Example
-
-```
-projects/
-
-project.routes.ts
-
-project.controller.ts
-
-project.service.ts
-
-project.schema.ts
-
-project.docs.ts
-
-index.ts
-```
-
-Every module should be self-contained.
-
-Modules should not directly access files inside another module.
-
-Communication between modules should happen through exported services only when required.
-
----
-
-# Shared Layer
-
-The shared layer contains reusable code used across multiple modules.
-
-Examples
-
-- Middleware
-- Utilities
-- Error classes
-- Constants
-- Database helpers
-- Response helpers
-- Authentication helpers
-
-Business logic must never be placed inside the shared layer.
-
----
-
-# Dependency Direction
-
-Dependencies always move downward.
-
-```
-Routes
-
-↓
-
-Controllers
-
-↓
-
-Services
-
-↓
-
-Repositories
-
-↓
-
-Database
-```
-
-The reverse direction is not allowed.
-
----
-
-# Business Rules
-
-Business rules always belong inside the Service Layer.
-
-Examples
-
-- Prevent duplicate slugs
-- Validate ownership
-- Publish rules
-- Archive rules
-- Portfolio visibility
-- Analytics calculations
-
-These rules must never exist in controllers or repositories.
-
----
-
-# Database Access
-
-All database operations must go through Prisma.
-
-Repositories are the only layer allowed to access Prisma Client.
-
-Controllers and services must never write raw database queries.
-
----
-
-# Error Handling
-
-The application uses centralized error handling.
-
-Services throw meaningful errors.
-
-Controllers do not catch business errors unless transformation is required.
-
-A global error handler formats all responses consistently.
-
----
-
-# Validation Strategy
-
-All request validation uses Zod.
-
-Validation occurs before controller execution.
-
-Invalid requests never reach the service layer.
-
----
-
-# Authentication Flow
-
-Protected routes follow this order.
-
-```
-Request
-
-↓
-
-JWT Authentication
-
-↓
-
 Authorization
 
 ↓
@@ -345,84 +64,233 @@ Validation
 ↓
 
 Controller
+
+↓
+
+Service
+
+↓
+
+Prisma Client
+
+↓
+
+Database
+
+↓
+
+Response
 ```
 
-Authorization rules must remain separate from business logic.
+Every feature must follow this lifecycle.
 
 ---
 
-# API Response Strategy
+# Module Structure
 
-Every endpoint returns a standardized response structure.
+Each feature follows the same structure.
 
-Success
+```text
+module/
 
-```
-{
-  success,
-  message,
-  data
-}
-```
+module.route.ts
 
-Failure
+module.controller.ts
 
-```
-{
-  success,
-  message,
-  errors
-}
+module.service.ts
+
+module.schema.ts
+
+module.docs.ts
 ```
 
-Controllers should never return custom response formats.
+Every module owns its implementation.
+
+Modules must not access another module's internal files directly.
 
 ---
 
-# Design Principles
+# Layer Responsibilities
 
-The architecture follows these principles.
+## Route
 
-- Feature-first organization
-- Single Responsibility Principle
-- Separation of Concerns
-- Dependency Inversion
-- Reusability
-- Type Safety
-- Explicit Dependencies
-- Minimal Coupling
-- High Cohesion
+Responsible for:
+
+* Registering endpoints
+* Applying middleware
+* Delegating requests to controllers
+
+Routes must not contain business logic.
 
 ---
 
-# Architectural Constraints
+## Controller
 
-The following practices are prohibited.
+Responsible for:
 
-- Fat Controllers
-- Business Logic in Routes
-- Database Queries in Controllers
-- Shared Global State
-- Circular Dependencies
-- Duplicate Business Logic
-- Direct Module Coupling
-- Unvalidated Request Data
+* Receiving requests
+* Calling services
+* Returning standardized responses
+
+Controllers must remain thin.
+
+They should never contain business logic or database queries.
 
 ---
 
-# Future Scalability
+## Service
 
-The architecture should support future enhancements without major refactoring.
+Responsible for:
 
-Possible future additions include
+* Business rules
+* Data orchestration
+* Validation beyond request schemas
+* Cross-module coordination
 
-- Redis
-- Background Jobs
-- Event Queue
-- Email Service
-- Object Storage
-- API Versioning
-- Webhooks
-- Caching
+Services are the heart of the application.
 
-The current architecture should accommodate these additions without changing the core module structure.
+---
+
+## Validation
+
+Every incoming request must be validated using Zod before reaching the controller.
+
+Controllers should always receive validated data.
+
+---
+
+# Shared Layer
+
+The `shared/` directory contains reusable utilities used across multiple modules.
+
+Examples:
+
+* Middleware
+* Error handling
+* Response helpers
+* Constants
+* Utility functions
+* Shared types
+
+Business logic must never exist inside the shared layer.
+
+---
+
+# Ownership Model
+
+The application follows an ownership-based authorization model.
+
+Every business resource belongs to exactly one user.
+
+Examples:
+
+* Project
+* Skill
+* Experience
+* Education
+* Certification
+* Blog
+* Media
+
+Users may only manage resources they own.
+
+Platform administrators may access all resources.
+
+---
+
+# Master Data
+
+Reusable lookup data is managed through the Category module.
+
+Current supported types include:
+
+* Project Categories
+* Skill Categories
+* Employment Types
+
+Business modules store foreign keys (`categoryId`) instead of display values.
+
+---
+
+# Media Architecture
+
+All uploads pass through the Media module.
+
+Business modules never upload files directly.
+
+Instead, they store references such as:
+
+* avatarMediaId
+* thumbnailMediaId
+* certificateMediaId
+
+This keeps media management centralized and reusable.
+
+---
+
+# Public Portfolio Architecture
+
+The public portfolio follows a **Backend For Frontend (BFF)** pattern.
+
+Portfolio data is aggregated into frontend-friendly responses.
+
+Example:
+
+```text
+GET /api/v1/portfolio/:username
+```
+
+The Portfolio module coordinates existing business modules rather than duplicating business logic.
+
+---
+
+# Authorization Strategy
+
+Authentication and authorization are separate concerns.
+
+Authentication verifies the user's identity.
+
+Authorization verifies ownership of the requested resource.
+
+Business logic should never perform authentication.
+
+---
+
+# Error Handling
+
+The application uses centralized error handling.
+
+Services throw meaningful errors.
+
+Controllers return standardized API responses.
+
+Internal implementation details must never be exposed.
+
+---
+
+# API Documentation
+
+Swagger is the source of truth for API documentation.
+
+Every module is responsible for documenting its own endpoints.
+
+Documentation must remain synchronized with implementation.
+
+---
+
+# Key Architectural Decisions
+
+The following decisions apply throughout the project:
+
+* Feature-first modular architecture.
+* Prisma is the only database access layer.
+* Zod validates every request.
+* JWT secures protected APIs.
+* Swagger documents every endpoint.
+* Media is managed centrally.
+* Master data is managed through Categories.
+* Public Portfolio APIs resolve users by `username`.
+* Authorization is ownership-based.
+* Business modules remain independent.
+
+

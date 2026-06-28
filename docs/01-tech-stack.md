@@ -1,23 +1,44 @@
+# 01 - Tech Stack
+
 # Technology Stack
 
 ## Purpose
 
-This document defines the official technology stack for the Portfolio CMS API. Every implementation must follow these standards unless explicitly changed in a future architectural decision.
+This document defines the technologies used by the Portfolio CMS API and the reasoning behind each decision.
+
+Only approved technologies should be used throughout the project unless an architectural change is made.
 
 ---
 
-# Runtime
+# Backend Runtime
 
 ## Node.js
 
-- Latest Active LTS Version
+**Purpose**
 
-Reason:
+Provides the JavaScript runtime for the backend application.
 
-- Long-term support
-- Stable ecosystem
-- Excellent performance
-- Large community support
+**Why**
+
+* High performance for I/O intensive applications.
+* Large ecosystem.
+* Excellent TypeScript support.
+* Well suited for REST APIs.
+
+---
+
+## Express.js
+
+**Purpose**
+
+Web framework for building REST APIs.
+
+**Why**
+
+* Lightweight.
+* Flexible middleware architecture.
+* Mature ecosystem.
+* Easy to scale with modular applications.
 
 ---
 
@@ -25,71 +46,62 @@ Reason:
 
 ## TypeScript
 
-Version:
-Latest Stable
+**Purpose**
 
-Configuration:
+Primary programming language.
 
-- Strict Mode Enabled
-- ES Modules
-- Incremental Compilation
-- Path Aliases
+**Why**
 
-Reason:
+* Static type checking.
+* Better IDE support.
+* Improved maintainability.
+* Safer refactoring.
+* Better developer experience.
 
-- Type Safety
-- Better Developer Experience
-- Easier Refactoring
-- Improved Maintainability
-
----
-
-# Backend Framework
-
-## Express.js
-
-Reason:
-
-- Minimal and flexible
-- Mature ecosystem
-- Large middleware support
-- Easy integration with Prisma
-- Ideal for REST APIs
+The project uses strict TypeScript configuration.
 
 ---
 
 # Database
 
-## PostgreSQL
+## PostgreSQL (Neon)
 
-Provider:
+**Purpose**
 
-Neon PostgreSQL
+Primary relational database.
 
-Reason:
+**Provider**
 
-- Relational database
-- ACID compliance
-- Excellent indexing
-- JSON support
-- Highly scalable
-- Production ready
+Neon Serverless PostgreSQL.
+
+**Why**
+
+* ACID compliant.
+* Relational modeling.
+* Excellent Prisma support.
+* Serverless architecture.
+* Automatic scaling.
+* Reliable production performance.
 
 ---
 
-# ORM
-
 ## Prisma ORM
 
-Reason:
+**Purpose**
 
-- Excellent TypeScript support
-- Type-safe queries
-- Simple migrations
-- Great developer experience
-- Automatic client generation
+Database access layer.
 
-Prisma will be the only ORM used in this project.
+**Why**
+
+* Type-safe queries.
+* Automatic client generation.
+* Migration management.
+* Excellent TypeScript integration.
+* Improved developer productivity.
+
+Prisma is the only approved database access layer.
+
+Raw SQL should only be used when absolutely necessary.
 
 ---
 
@@ -97,14 +109,18 @@ Prisma will be the only ORM used in this project.
 
 ## Zod
 
-Reason:
+**Purpose**
 
-- Type-safe schemas
-- Excellent TypeScript integration
-- Reusable validation
-- Easy error handling
+Runtime request validation.
 
-Every request payload must be validated using Zod.
+**Why**
+
+* Type-safe schemas.
+* Excellent TypeScript integration.
+* Simple validation syntax.
+* Reusable request schemas.
+
+Every incoming request must be validated using Zod.
 
 ---
 
@@ -112,242 +128,176 @@ Every request payload must be validated using Zod.
 
 ## JWT (JSON Web Token)
 
-Used For
+**Purpose**
 
-- Access Token
-- Refresh Token
+Authenticate protected APIs.
 
-Password Hashing
+**Why**
 
-bcrypt
+* Stateless authentication.
+* Lightweight.
+* Widely adopted.
+* Easy frontend integration.
 
-Reason
+Used for:
 
-- Secure authentication
-- Stateless API
-- Industry standard
-
----
-
-# Environment Variables
-
-dotenv
-
-Purpose
-
-Store
-
-- Database URL
-- JWT Secrets
-- Application Port
-- Environment
-- Other sensitive configuration
-
-Environment variables must never be committed to Git.
-
----
-
-# Security
-
-The following middleware will be used.
-
-- helmet
-- cors
-- compression
-- express-rate-limit
-- cookie-parser
-
-Reason
-
-Protect the API using standard security practices.
-
----
-
-# Logging
-
-Morgan
-
-Purpose
-
-- HTTP request logging
-
-Future Enhancement
-
-Application logger may be replaced by Winston or Pino if advanced logging is required.
+* Access Tokens
+* Refresh Tokens
 
 ---
 
 # API Documentation
 
-Swagger / OpenAPI
+## Swagger (OpenAPI)
+
+**Purpose**
+
+Interactive API documentation.
+
+**Why**
+
+* Live API testing.
+* Self-documenting backend.
+* Frontend collaboration.
+* Simplifies development.
+
+Swagger is the primary interface for testing APIs.
+
+Postman collections are optional.
+
+---
+
+# Media Storage
+
+## Cloudinary
+
+**Purpose**
+
+Media management.
+
+**Why**
+
+* Image optimization.
+* CDN delivery.
+* Secure uploads.
+* Automatic transformations.
+* Production-ready asset management.
+
+Business modules store media references instead of files.
+
+---
+
+# Environment Configuration
+
+## dotenv
+
+**Purpose**
+
+Environment variable management.
+
+Used for:
+
+* Database configuration.
+* JWT secrets.
+* Cloudinary credentials.
+* Application configuration.
+
+Sensitive values must never be committed to source control.
+
+---
+
+# Code Quality
+
+## ESLint
+
+**Purpose**
+
+Code quality and consistency.
+
+Rules should enforce:
+
+* TypeScript best practices.
+* Code consistency.
+* Error prevention.
+
+---
+
+## Prettier
+
+**Purpose**
+
+Automatic code formatting.
+
+Used to maintain consistent formatting across the project.
+
+---
+
+# API Testing
+
+Primary Tool
+
+```text
+Swagger UI
+```
 
 Purpose
 
-- Interactive API documentation
-- Request examples
-- Response examples
+* Endpoint testing
+* Request validation
+* Response verification
+* API exploration
 
-Swagger integration will be added after the API foundation is completed.
-
----
-
-# Testing
-
-Testing Framework
-
-Vitest
-
-Future Scope
-
-- Unit Tests
-- Integration Tests
-- API Tests
-
-Testing is planned after core feature implementation.
+Swagger replaces the need for manually maintaining Postman collections during development.
 
 ---
 
-# File Upload
+# Project Architecture Stack
 
-Future Package
+```text
+Client
 
-Multer
+↓
 
-Purpose
+REST API (Express)
 
-- Image Uploads
-- Resume Upload
-- Portfolio Assets
+↓
 
-Cloud storage integration may be added in future versions.
+Authentication (JWT)
 
----
+↓
 
-# Development Tools
+Validation (Zod)
 
-Package Manager
+↓
 
-npm
+Business Services
 
-Version Control
+↓
 
-Git
+Prisma ORM
 
-Repository Hosting
+↓
 
-GitHub
+PostgreSQL (Neon)
 
-API Client
+↓
 
-Postman
-
-Database Tool
-
-Prisma Studio
+Cloudinary (Media)
+```
 
 ---
 
-# Project Conventions
+# Guiding Principles
 
-Module System
+Technology choices should prioritize:
 
-ES Modules
+* Simplicity
+* Maintainability
+* Type Safety
+* Scalability
+* Developer Experience
+* Production Readiness
 
-Async Pattern
-
-async / await only
-
-Import Style
-
-Named imports where applicable
-
-Error Handling
-
-Centralized
-
-Validation
-
-Request validation using Zod
-
-Database Access
-
-Prisma only
-
-API Style
-
-REST
-
-Architecture
-
-Feature-based Clean Architecture
+New technologies should only be introduced when they provide clear architectural value.
 
 ---
-
-# Dependencies
-
-## Runtime Dependencies
-
-- express
-- prisma
-- @prisma/client
-- zod
-- jsonwebtoken
-- bcrypt
-- dotenv
-- cors
-- helmet
-- compression
-- express-rate-limit
-- cookie-parser
-- morgan
-
----
-
-## Development Dependencies
-
-- typescript
-- tsx
-- @types/node
-- @types/express
-- @types/jsonwebtoken
-- @types/bcrypt
-- @types/cors
-- @types/cookie-parser
-- prisma
-- vitest
-- eslint
-- prettier
-
----
-
-# Technology Decisions
-
-The following technologies are intentionally not used.
-
-- MongoDB
-- Mongoose
-- Sequelize
-- TypeORM
-- Joi
-- Yup
-- CommonJS
-- JavaScript
-- GraphQL
-
-These decisions are intentional to maintain consistency throughout the project.
-
----
-
-# Future Considerations
-
-The following technologies may be introduced in later versions if needed.
-
-- Redis
-- Docker
-- GitHub Actions
-- S3 Compatible Storage
-- Pino
-- Prometheus
-- Grafana
-
-These are outside the scope of the initial implementation.

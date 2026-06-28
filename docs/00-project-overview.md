@@ -1,159 +1,187 @@
+# 00 - Project Overview
+
 # Portfolio CMS API
 
-## Project Overview
+## Overview
 
-### Purpose
+Portfolio CMS API is a SaaS backend application that enables developers to create, manage, and publish their own professional portfolio through a secure Content Management System (CMS).
 
-Portfolio CMS API is a production-ready backend that enables developers to manage their personal portfolio content through a secure Content Management System (CMS). The backend exposes authenticated APIs for content management and public APIs for portfolio consumption.
+Each registered user owns a single portfolio and manages its content through authenticated CMS APIs. The portfolio is exposed through a set of public APIs that can be consumed by any frontend application.
 
-The project is designed to separate content management from portfolio presentation, allowing the frontend portfolio to consume only published, user-specific data.
-
----
-
-# Goals
-
-- Build a scalable REST API using modern backend architecture.
-- Provide secure authentication and authorization.
-- Allow users to manage every section of their portfolio.
-- Expose optimized public APIs for portfolio websites.
-- Maintain a clean, modular, and maintainable codebase.
-- Follow enterprise-level coding standards.
-- Serve as a professional portfolio project demonstrating backend architecture and API design.
+The project is designed with a clear separation between content management and portfolio presentation, allowing the backend to serve multiple portfolio websites while maintaining a consistent API contract.
 
 ---
 
-# Project Scope
+# Vision
 
-The backend will support the following modules:
+Build a production-ready backend that allows developers to:
 
-- Authentication
-- User Profile
-- Projects
-- Skills
-- Experience
-- Education
-- Certifications
-- Blog
-- Portfolio Settings
-- Dashboard
-- Analytics
-- Media Upload
-- Activity Logs
+* Manage their portfolio from a single dashboard.
+* Publish projects, blogs, skills, experience, education, and certifications.
+* Upload and manage media assets.
+* Expose a fast, frontend-friendly public portfolio API.
+* Scale from a single developer to a multi-user SaaS platform.
+
+---
+
+# Product Goals
+
+The primary goals of the project are:
+
+* Build a scalable REST API.
+* Support multiple users with isolated portfolio data.
+* Keep business logic modular and maintainable.
+* Provide a consistent developer experience.
+* Follow production-ready engineering practices.
+* Serve as both a real SaaS product and a backend architecture reference.
+
+---
+
+# SaaS Model
+
+The application follows a Software as a Service (SaaS) model.
+
+Each registered user owns:
+
+* One account
+* One profile
+* One portfolio
+* One dashboard
+
+Portfolio data is completely isolated between users.
+
+Every resource belongs to exactly one user.
 
 ---
 
 # User Roles
 
-## Portfolio Owner
+## USER
 
-The authenticated user who manages portfolio content.
+Represents a customer of the platform.
 
-Capabilities:
+A USER can:
 
-- Login securely
-- Manage personal profile
-- Perform CRUD operations on all portfolio resources
-- Configure portfolio settings
-- View dashboard statistics
-- View activity logs
+* Manage their own portfolio
+* Manage their own content
+* Upload media
+* Publish projects and blogs
+* Configure portfolio settings
+* View their own dashboard
 
----
-
-## Portfolio Visitor
-
-An unauthenticated user visiting the portfolio website.
-
-Capabilities:
-
-- View public portfolio information
-- View published projects
-- View published blog posts
-- View skills, education, certifications, and experience
-- Generate analytics events (page views)
-
-Visitors cannot modify any data.
+A USER can never access another user's data.
 
 ---
 
-# API Categories
+## ADMIN
 
-The backend exposes two categories of APIs.
+Represents the platform administrator.
 
-## CMS APIs
+An ADMIN can:
 
-Protected APIs used by authenticated users.
+* Manage users
+* Access all portfolios
+* Moderate platform content
+* Manage platform-level configuration
+* Access administrative features
 
-Base URL:
-
-/api/v1
-
-Examples:
-
-- /auth
-- /projects
-- /skills
-- /experience
-
-These APIs require authentication.
+The ADMIN role manages the platform, not an individual portfolio.
 
 ---
 
-## Public Portfolio APIs
+# Core Modules
 
-Public APIs consumed by portfolio websites.
+The application currently consists of the following modules:
 
-Base URL:
+* Authentication
+* Profile
+* Media
+* Projects
+* Skills
+* Categories (Master Data)
+* Experience
+* Education
+* Certifications
+* Blog
+* Portfolio (Public API)
 
-/api/v1/portfolio/:username
+Future modules include:
 
-These APIs return only publicly available data.
-
-No authentication is required.
-
----
-
-# Core Principles
-
-The project follows these principles:
-
-- RESTful API design
-- Feature-based architecture
-- Clean Architecture
-- SOLID principles
-- Secure by default
-- Type safety
-- Validation-first development
-- Consistent API responses
-- Reusable components
-- Minimal code duplication
+* Dashboard
+* Settings
+* Platform Administration
 
 ---
 
-# Non-Goals
+# Public Portfolio
 
-The following features are intentionally excluded from the initial version:
+Every portfolio is publicly accessible using a unique username.
 
-- Multiple portfolio support
-- Team collaboration
-- OAuth providers
-- Email notifications
-- Multi-language support
-- Real-time updates
-- GraphQL
-- Microservices
+Example:
 
-These features may be considered in future releases.
+```text
+GET /api/v1/portfolio/johndoe
+
+GET /api/v1/portfolio/ranjithk
+```
+
+The public API exposes only published and publicly visible content.
+
+Private CMS data is never returned.
 
 ---
 
-# Success Criteria
+# Key Architectural Decisions
 
-The project is considered complete when:
+The project follows these architectural decisions:
 
-- All planned modules are implemented.
-- All APIs follow a consistent standard.
-- Authentication and authorization are secure.
-- Public APIs expose only published content.
-- The backend is production-ready.
-- The codebase is modular, maintainable, and extensible.
-- Documentation is complete and kept in sync with implementation.
+* Feature-first modular architecture.
+* One portfolio per user.
+* Ownership-based authorization.
+* Public portfolios resolved by username.
+* Backend For Frontend (BFF) pattern for portfolio APIs.
+* Media managed through a centralized Media module.
+* Shared master data managed through the Category module.
+* Swagger as the primary API documentation and testing interface.
+
+These decisions provide a consistent foundation for future development.
+
+---
+
+# Project Principles
+
+The project is built around the following principles:
+
+* Simplicity
+* Maintainability
+* Scalability
+* Consistency
+* Type Safety
+* Secure by Default
+* Reusable Components
+* Clear Separation of Concerns
+
+---
+
+# Project Status
+
+Current implementation includes:
+
+* Authentication & Authorization
+* Profile Management
+* Media Management
+* Projects
+* Skills
+* Categories
+* Experience
+* Education
+* Certifications
+* Blog
+* Public Portfolio API
+
+Remaining planned modules:
+
+* Dashboard
+* Settings
+* Production Readiness
+

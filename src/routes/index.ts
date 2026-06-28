@@ -10,6 +10,7 @@ import { experienceRoutes } from '../modules/experience/index.js';
 import { educationRoutes } from '../modules/education/index.js';
 import { certificationRoutes } from '../modules/certification/index.js';
 import { blogRoutes } from '../modules/blog/index.js';
+import { portfolioRoutes } from '../modules/portfolio/index.js';
 import { sendSuccess } from '../shared/responses/index.js';
 
 const router = Router();
@@ -30,5 +31,6 @@ router.use('/experiences', experienceRoutes);
 router.use('/educations', educationRoutes);
 router.use('/certifications', certificationRoutes);
 router.use('/blogs', blogRoutes);
+router.use('/portfolio', portfolioRoutes);
 
 export default router;
