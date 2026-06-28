@@ -10,6 +10,7 @@ import { registerCategoryDocs } from '../modules/category/category.docs.js';
 import { registerExperienceDocs } from '../modules/experience/index.js';
 import { registerEducationDocs } from '../modules/education/index.js';
 import { registerCertificationDocs } from '../modules/certification/index.js';
+import { registerBlogDocs } from '../modules/blog/index.js';
 
 export const registry = new OpenAPIRegistry();
 
@@ -31,6 +32,7 @@ registerCategoryDocs(registry);
 registerExperienceDocs(registry);
 registerEducationDocs(registry);
 registerCertificationDocs(registry);
+registerBlogDocs(registry);
 
 export function generateOpenAPI() {
   const generator = new OpenApiGeneratorV3(registry.definitions);

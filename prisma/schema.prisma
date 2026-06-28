@@ -51,6 +51,7 @@ model User {
   experiences Experience[]
   educations Education[]
   certifications Certification[]
+  blogs      Blog[]
 }
 
 model Profile {
@@ -88,12 +89,18 @@ model Media {
   updatedAt    DateTime  @updatedAt
   projects     Project[]
   certifications Certification[]
+  blogs        Blog[]
 }
 
 enum ProjectStatus {
   DRAFT
   PUBLISHED
   ARCHIVED
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
 }
 
 model Project {
@@ -193,4 +200,27 @@ model Certification {
 
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
+}
+
+model Blog {
+  id             String     @id @default(cuid())
+  title          String
+  slug           String     @unique
+  excerpt        String
+  content        String
+  coverMediaId   String?
+  coverMedia     Media?     @relation(fields: [coverMediaId], references: [id], onDelete: SetNull)
+  readTime       Int?       @default(0)
+  tags           String[]
+  status         BlogStatus @default(DRAFT)
+  featured       Boolean    @default(false)
+  publishedAt    DateTime?
+  seoTitle       String?
+  seoDescription String?
+
+  userId         String
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 }
