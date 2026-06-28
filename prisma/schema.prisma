@@ -29,6 +29,7 @@ model Category {
   updatedAt    DateTime     @updatedAt
   projects     Project[]
   skills       Skill[]
+  experiences  Experience[]
 
   @@unique([name, type])
 }
@@ -47,6 +48,7 @@ model User {
   media     Media[]
   projects  Project[]
   skills    Skill[]
+  experiences Experience[]
 }
 
 model Profile {
@@ -127,4 +129,26 @@ model Skill {
 
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+}
+
+model Experience {
+  id               String    @id @default(cuid())
+  company          String
+  role             String
+  employmentTypeId String
+  employmentType   Category  @relation(fields: [employmentTypeId], references: [id], onDelete: Restrict)
+  location         String?
+  startDate        DateTime
+  endDate          DateTime?
+  isCurrent        Boolean   @default(false)
+  description      String?
+  responsibilities String[]
+  technologies     String[]
+  displayOrder     Int       @default(0)
+
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }
