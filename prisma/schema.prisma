@@ -15,6 +15,7 @@ enum CategoryType {
   PROJECT
   SKILL
   BLOG
+  EMPLOYMENT_TYPE
 }
 
 model Category {
