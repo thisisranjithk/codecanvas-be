@@ -1,7 +1,8 @@
 import type { UploadApiResponse } from 'cloudinary';
 import cloudinary from '../../config/cloudinary.js';
 import { prisma } from '../../config/database.js';
-import { NotFoundError } from '../../shared/errors/index.js';
+import { NotFoundError, ForbiddenError } from '../../shared/errors/index.js';
+import type { UserRole } from '@prisma/client';
 
 export const uploadMedia = async (file: Express.Multer.File, folder: string | undefined, userId: string) => {
   // 1. Upload to Cloudinary using upload_stream
@@ -44,7 +45,7 @@ export const uploadMedia = async (file: Express.Multer.File, folder: string | un
   return media;
 };
 
-export const getMediaById = async (id: string) => {
+export const getMediaById = async (id: string, userId: string, userRole: UserRole) => {
   const media = await prisma.media.findUnique({
     where: { id },
   });
@@ -53,16 +54,24 @@ export const getMediaById = async (id: string) => {
     throw new NotFoundError('Media not found');
   }
 
+  if (userRole !== 'ADMIN' && media.uploadedById !== userId) {
+    throw new ForbiddenError('Access denied');
+  }
+
   return media;
 };
 
-export const deleteMedia = async (id: string) => {
+export const deleteMedia = async (id: string, userId: string, userRole: UserRole) => {
   const media = await prisma.media.findUnique({
     where: { id },
   });
 
   if (!media) {
     throw new NotFoundError('Media not found');
+  }
+
+  if (userRole !== 'ADMIN' && media.uploadedById !== userId) {
+    throw new ForbiddenError('Access denied');
   }
 
   await cloudinary.uploader.destroy(media.publicId);

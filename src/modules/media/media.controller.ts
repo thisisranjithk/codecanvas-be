@@ -23,14 +23,18 @@ export const uploadMediaHandler = asyncHandler(async (req: Request, res: Respons
 
 export const getMediaHandler = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const media = await mediaService.getMediaById(id as string);
+  const userId = req.user!.id;
+  const userRole = req.user!.role;
+  const media = await mediaService.getMediaById(id as string, userId, userRole);
 
   sendSuccess(res, 'Media retrieved successfully', { media });
 });
 
 export const deleteMediaHandler = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  await mediaService.deleteMedia(id as string);
+  const userId = req.user!.id;
+  const userRole = req.user!.role;
+  await mediaService.deleteMedia(id as string, userId, userRole);
 
   sendSuccess(res, 'Media deleted successfully', null);
 });

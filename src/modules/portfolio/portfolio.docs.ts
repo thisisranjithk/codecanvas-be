@@ -3,13 +3,22 @@ import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
 import {
   listProjectsQuerySchema,
-  projectIdParamSchema,
 } from '../project/project.schema.js';
 import { listBlogsQuerySchema } from '../blog/blog.schema.js';
 
 extendZodWithOpenApi(z);
 
-const blogSlugParamSchema = z.object({
+const usernameParamSchema = z.object({
+  username: z.string().openapi({ example: 'johndoe' }),
+});
+
+const usernameAndProjectIdParamSchema = z.object({
+  username: z.string().openapi({ example: 'johndoe' }),
+  id: z.string().openapi({ example: 'clxyz123' }),
+});
+
+const usernameAndBlogSlugParamSchema = z.object({
+  username: z.string().openapi({ example: 'johndoe' }),
   slug: z.string().openapi({ example: 'my-first-blog' }),
 });
 
@@ -23,10 +32,14 @@ const portfolioTag = 'Portfolio (Public API)';
 export function registerPortfolioDocs(registry: OpenAPIRegistry) {
   registry.registerPath({
     method: 'get',
-    path: '/api/v1/portfolio',
+    path: '/api/v1/portfolio/{username}',
     tags: [portfolioTag],
     summary: 'Get Portfolio Homepage',
-    description: 'Retrieves aggregated portfolio data including profile, featured projects, skills, experiences, educations, certifications, and latest published blogs.',
+    description:
+      'Retrieves aggregated portfolio data for the given username, including profile, featured projects, skills, experiences, educations, certifications, and latest published blogs.',
+    request: {
+      params: usernameParamSchema,
+    },
     responses: {
       200: {
         description: 'Portfolio homepage data retrieved successfully',
@@ -34,14 +47,16 @@ export function registerPortfolioDocs(registry: OpenAPIRegistry) {
           'application/json': {
             schema: z.object({
               success: z.boolean().openapi({ example: true }),
-              message: z.string().openapi({ example: 'Portfolio data retrieved successfully' }),
+              message: z
+                .string()
+                .openapi({ example: 'Portfolio data retrieved successfully.' }),
               data: z.any(),
             }),
           },
         },
       },
       404: {
-        description: 'Portfolio owner not found',
+        description: 'Portfolio not found for the given username',
         content: {
           'application/json': {
             schema: errorResponseSchema,
@@ -53,11 +68,13 @@ export function registerPortfolioDocs(registry: OpenAPIRegistry) {
 
   registry.registerPath({
     method: 'get',
-    path: '/api/v1/portfolio/projects',
+    path: '/api/v1/portfolio/{username}/projects',
     tags: [portfolioTag],
     summary: 'Get Portfolio Projects',
-    description: 'Retrieves a paginated list of published projects.',
+    description:
+      'Retrieves a paginated list of published projects for the given username.',
     request: {
+      params: usernameParamSchema,
       query: listProjectsQuerySchema,
     },
     responses: {
@@ -67,9 +84,19 @@ export function registerPortfolioDocs(registry: OpenAPIRegistry) {
           'application/json': {
             schema: z.object({
               success: z.boolean().openapi({ example: true }),
-              message: z.string().openapi({ example: 'Projects retrieved successfully' }),
+              message: z
+                .string()
+                .openapi({ example: 'Projects retrieved successfully.' }),
               data: z.any(),
             }),
+          },
+        },
+      },
+      404: {
+        description: 'Portfolio not found for the given username',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
           },
         },
       },
@@ -78,12 +105,13 @@ export function registerPortfolioDocs(registry: OpenAPIRegistry) {
 
   registry.registerPath({
     method: 'get',
-    path: '/api/v1/portfolio/projects/{id}',
+    path: '/api/v1/portfolio/{username}/projects/{id}',
     tags: [portfolioTag],
     summary: 'Get Portfolio Project by ID',
-    description: 'Retrieves details of a specific published project.',
+    description:
+      'Retrieves details of a specific published project for the given username.',
     request: {
-      params: projectIdParamSchema,
+      params: usernameAndProjectIdParamSchema,
     },
     responses: {
       200: {
@@ -92,7 +120,9 @@ export function registerPortfolioDocs(registry: OpenAPIRegistry) {
           'application/json': {
             schema: z.object({
               success: z.boolean().openapi({ example: true }),
-              message: z.string().openapi({ example: 'Project retrieved successfully' }),
+              message: z
+                .string()
+                .openapi({ example: 'Project retrieved successfully.' }),
               data: z.any(),
             }),
           },
@@ -111,11 +141,13 @@ export function registerPortfolioDocs(registry: OpenAPIRegistry) {
 
   registry.registerPath({
     method: 'get',
-    path: '/api/v1/portfolio/blogs',
+    path: '/api/v1/portfolio/{username}/blogs',
     tags: [portfolioTag],
     summary: 'Get Portfolio Blogs',
-    description: 'Retrieves a paginated list of published blogs.',
+    description:
+      'Retrieves a paginated list of published blogs for the given username.',
     request: {
+      params: usernameParamSchema,
       query: listBlogsQuerySchema,
     },
     responses: {
@@ -125,9 +157,19 @@ export function registerPortfolioDocs(registry: OpenAPIRegistry) {
           'application/json': {
             schema: z.object({
               success: z.boolean().openapi({ example: true }),
-              message: z.string().openapi({ example: 'Blogs retrieved successfully' }),
+              message: z
+                .string()
+                .openapi({ example: 'Blogs retrieved successfully.' }),
               data: z.any(),
             }),
+          },
+        },
+      },
+      404: {
+        description: 'Portfolio not found for the given username',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
           },
         },
       },
@@ -136,12 +178,13 @@ export function registerPortfolioDocs(registry: OpenAPIRegistry) {
 
   registry.registerPath({
     method: 'get',
-    path: '/api/v1/portfolio/blogs/{slug}',
+    path: '/api/v1/portfolio/{username}/blogs/{slug}',
     tags: [portfolioTag],
     summary: 'Get Portfolio Blog by Slug',
-    description: 'Retrieves details of a specific published blog by its slug.',
+    description:
+      'Retrieves details of a specific published blog by its slug for the given username.',
     request: {
-      params: blogSlugParamSchema,
+      params: usernameAndBlogSlugParamSchema,
     },
     responses: {
       200: {
@@ -150,7 +193,9 @@ export function registerPortfolioDocs(registry: OpenAPIRegistry) {
           'application/json': {
             schema: z.object({
               success: z.boolean().openapi({ example: true }),
-              message: z.string().openapi({ example: 'Blog retrieved successfully' }),
+              message: z
+                .string()
+                .openapi({ example: 'Blog retrieved successfully.' }),
               data: z.any(),
             }),
           },

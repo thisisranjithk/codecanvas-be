@@ -24,8 +24,8 @@ export const createBlog = async (userId: string, data: CreateBlogInput) => {
     }
   }
 
-  const existingSlug = await prisma.blog.findUnique({
-    where: { slug: data.slug },
+  const existingSlug = await prisma.blog.findFirst({
+    where: { slug: data.slug, userId },
   });
   if (existingSlug) {
     throw new ConflictError('Slug is already in use');
@@ -162,8 +162,8 @@ export const updateBlog = async (
   }
 
   if (data.slug && data.slug !== blog.slug) {
-    const existingSlug = await prisma.blog.findUnique({
-      where: { slug: data.slug },
+    const existingSlug = await prisma.blog.findFirst({
+      where: { slug: data.slug, userId },
     });
     if (existingSlug) {
       throw new ConflictError('Slug is already in use');

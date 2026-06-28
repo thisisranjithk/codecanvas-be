@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { authenticate, validate } from '../../shared/middleware/index.js';
+import { authenticate, authorize, validate } from '../../shared/middleware/index.js';
 import * as categoryController from './category.controller.js';
 import {
   createCategorySchema,
@@ -22,6 +22,7 @@ categoryRoutes.get(
 
 categoryRoutes.post(
   '/',
+  authorize('ADMIN'),
   validate(createCategorySchema),
   categoryController.createCategoryHandler
 );
@@ -39,6 +40,7 @@ categoryRoutes.get(
 
 categoryRoutes.put(
   '/:id',
+  authorize('ADMIN'),
   validate(categoryIdParamSchema, 'params'),
   validate(updateCategorySchema, 'body'),
   categoryController.updateCategoryHandler
@@ -46,6 +48,7 @@ categoryRoutes.put(
 
 categoryRoutes.delete(
   '/:id',
+  authorize('ADMIN'),
   validate(categoryIdParamSchema, 'params'),
   categoryController.deleteCategoryHandler
 );
