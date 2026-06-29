@@ -2,7 +2,7 @@ import type { Prisma } from '@prisma/client';
 
 import { prisma } from '../../config/database.js';
 import { ConflictError, NotFoundError } from '../../shared/errors/index.js';
-import type { CreateProfileInput, UpdateProfileInput } from './profile.schema.js';
+import type { CreateProfileInput, UpdateProfileInput, UpdatePortfolioSettingsInput } from './profile.schema.js';
 
 export async function createProfile(userId: string, data: CreateProfileInput) {
   const existingProfile = await prisma.profile.findUnique({
@@ -20,6 +20,7 @@ export async function createProfile(userId: string, data: CreateProfileInput) {
 
   const profile = await prisma.profile.create({
     data: createData,
+    include: { user: { select: { username: true } } },
   });
 
   let avatarUrl: string | null = null;
@@ -32,8 +33,11 @@ export async function createProfile(userId: string, data: CreateProfileInput) {
     }
   }
 
+  const { user, ...profileData } = profile;
+
   return {
-    ...profile,
+    ...profileData,
+    username: user.username,
     avatarUrl,
   };
 }
@@ -41,6 +45,7 @@ export async function createProfile(userId: string, data: CreateProfileInput) {
 export async function getProfileByUserId(userId: string) {
   const profile = await prisma.profile.findUnique({
     where: { userId },
+    include: { user: { select: { username: true } } },
   });
 
   if (!profile) {
@@ -57,8 +62,11 @@ export async function getProfileByUserId(userId: string) {
     }
   }
 
+  const { user, ...profileData } = profile;
+
   return {
-    ...profile,
+    ...profileData,
+    username: user.username,
     avatarUrl,
   };
 }
@@ -77,6 +85,7 @@ export async function updateProfile(userId: string, data: UpdateProfileInput) {
   const updatedProfile = await prisma.profile.update({
     where: { userId },
     data: updateData,
+    include: { user: { select: { username: true } } },
   });
 
   let avatarUrl: string | null = null;
@@ -89,8 +98,42 @@ export async function updateProfile(userId: string, data: UpdateProfileInput) {
     }
   }
 
+  const { user, ...profileData } = updatedProfile;
+
   return {
-    ...updatedProfile,
+    ...profileData,
+    username: user.username,
     avatarUrl,
   };
+}
+
+export async function getPortfolioSettings(userId: string) {
+  const profile = await prisma.profile.findUnique({
+    where: { userId },
+    select: { portfolioVisibility: true, showEmail: true, openToWork: true },
+  });
+
+  if (!profile) {
+    throw new NotFoundError('Profile not found.');
+  }
+
+  return profile;
+}
+
+export async function updatePortfolioSettings(userId: string, data: UpdatePortfolioSettingsInput) {
+  const profile = await prisma.profile.findUnique({
+    where: { userId },
+  });
+
+  if (!profile) {
+    throw new NotFoundError('Profile not found.');
+  }
+
+  const updatedProfile = await prisma.profile.update({
+    where: { userId },
+    data: data as Prisma.ProfileUncheckedUpdateInput,
+    select: { portfolioVisibility: true, showEmail: true, openToWork: true },
+  });
+
+  return updatedProfile;
 }

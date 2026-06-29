@@ -29,3 +29,11 @@ export const updateProfileSchema = z.object({
 
 export type CreateProfileInput = z.infer<typeof createProfileSchema>;
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
+
+export const updatePortfolioSettingsSchema = z.object({
+  portfolioVisibility: z.enum(['PUBLIC', 'PRIVATE']).optional(),
+  showEmail: z.boolean().optional(),
+  openToWork: z.boolean().optional(),
+}).openapi('UpdatePortfolioSettingsRequest');
+
+export type UpdatePortfolioSettingsInput = z.infer<typeof updatePortfolioSettingsSchema>;

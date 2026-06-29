@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { env, prisma } from '../../config/index.js';
 import { ConflictError, NotFoundError, UnauthorizedError } from '../../shared/errors/index.js';
 import type { PublicUser } from '../../shared/types/index.js';
-import type { LoginInput, RegisterInput } from './auth.schema.js';
+import type { LoginInput, RegisterInput, ChangePasswordInput } from './auth.schema.js';
 
 const BCRYPT_SALT_ROUNDS = 12;
 
@@ -33,8 +33,7 @@ function signAccessToken(user: Pick<PublicUser, 'id' | 'email' | 'role'>): strin
   );
 }
 
-export const authService = {
-  async register(input: RegisterInput): Promise<PublicUser> {
+export async function register(input: RegisterInput): Promise<PublicUser> {
     const existingEmail = await prisma.user.findUnique({
       where: { email: input.email },
     });
@@ -62,9 +61,9 @@ export const authService = {
       },
       select: userPublicSelect,
     });
-  },
+  }
 
-  async login(input: LoginInput): Promise<{ user: PublicUser; accessToken: string }> {
+export async function login(input: LoginInput): Promise<{ user: PublicUser; accessToken: string }> {
     const user = await prisma.user.findUnique({
       where: { email: input.email },
     });
@@ -92,9 +91,9 @@ export const authService = {
       user: publicUser,
       accessToken: signAccessToken(publicUser),
     };
-  },
+  }
 
-  async getCurrentUser(userId: string): Promise<PublicUser> {
+export async function getCurrentUser(userId: string): Promise<PublicUser> {
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: userPublicSelect,
@@ -105,5 +104,48 @@ export const authService = {
     }
 
     return user;
-  },
-};
+  }
+
+export async function changePassword(userId: string, input: ChangePasswordInput): Promise<void> {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user || !user.isActive) {
+      throw new NotFoundError('User not found.');
+    }
+
+    const isPasswordValid = await bcrypt.compare(input.currentPassword, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedError('Invalid current password.');
+    }
+
+    const isSamePassword = await bcrypt.compare(input.newPassword, user.password);
+    if (isSamePassword) {
+      throw new ConflictError('New password must be different from current password.');
+    }
+
+    const hashedPassword = await bcrypt.hash(input.newPassword, BCRYPT_SALT_ROUNDS);
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+    
+    // Invalidate refresh tokens is not applicable as they don't exist in schema
+  }
+
+export async function verifyPassword(userId: string, password: string): Promise<void> {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user || !user.isActive) {
+      throw new NotFoundError('User not found.');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedError('Invalid password.');
+    }
+  }

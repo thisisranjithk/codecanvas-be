@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 
 import { sendSuccess } from '../../shared/responses/index.js';
 import * as profileService from './profile.service.js';
-import type { CreateProfileInput, UpdateProfileInput } from './profile.schema.js';
+import type { CreateProfileInput, UpdateProfileInput, UpdatePortfolioSettingsInput } from './profile.schema.js';
 
 export async function createProfileHandler(req: Request, res: Response) {
   const userId = req.user!.id;
@@ -28,4 +28,21 @@ export async function updateProfileHandler(req: Request, res: Response) {
   const profile = await profileService.updateProfile(userId, profileData);
 
   sendSuccess(res, 'Profile updated successfully.', profile, 200);
+}
+
+export async function getPortfolioSettingsHandler(req: Request, res: Response) {
+  const userId = req.user!.id;
+
+  const settings = await profileService.getPortfolioSettings(userId);
+
+  sendSuccess(res, 'Portfolio settings retrieved successfully.', settings, 200);
+}
+
+export async function updatePortfolioSettingsHandler(req: Request, res: Response) {
+  const userId = req.user!.id;
+  const settingsData = req.body as UpdatePortfolioSettingsInput;
+
+  const settings = await profileService.updatePortfolioSettings(userId, settingsData);
+
+  sendSuccess(res, 'Portfolio settings updated successfully.', settings, 200);
 }

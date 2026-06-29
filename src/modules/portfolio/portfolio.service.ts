@@ -10,10 +10,10 @@ import { QueryBuilder } from '../../shared/utils/query-builder.js';
 const resolveUserByUsername = async (username: string) => {
   const user = await prisma.user.findUnique({
     where: { username: username.toLowerCase() },
-    select: { id: true, fullName: true, username: true, isActive: true },
+    select: { id: true, fullName: true, username: true, isActive: true, profile: { select: { portfolioVisibility: true } } },
   });
 
-  if (!user || !user.isActive) {
+  if (!user || !user.isActive || user.profile?.portfolioVisibility === 'PRIVATE') {
     throw new NotFoundError('Portfolio not found.');
   }
 

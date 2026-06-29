@@ -1,11 +1,12 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
 
-import { createProfileSchema, updateProfileSchema } from './profile.schema.js';
+import { createProfileSchema, updateProfileSchema, updatePortfolioSettingsSchema } from './profile.schema.js';
 
 const profileResponseSchema = z.object({
   id: z.string().openapi({ example: 'clq9z2x3a000008l9g7h8i9j0' }),
   userId: z.string().openapi({ example: 'clq9z2x3a000008l9g7h8i9j1' }),
+  username: z.string().openapi({ example: 'johndoe' }),
   headline: z.string().nullable().openapi({ example: 'Software Engineer' }),
   bio: z.string().nullable().openapi({ example: 'Passionate about web development.' }),
   location: z.string().nullable().openapi({ example: 'San Francisco, CA' }),
@@ -122,6 +123,73 @@ export function registerProfileDocs(registry: OpenAPIRegistry) {
       },
       404: {
         description: 'Profile not found.',
+      },
+    },
+  });
+
+  const portfolioSettingsSchema = z.object({
+    portfolioVisibility: z.string().openapi({ example: 'PUBLIC' }),
+    showEmail: z.boolean().openapi({ example: false }),
+    openToWork: z.boolean().openapi({ example: false }),
+  });
+
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/profile/portfolio-settings',
+    tags: ['Profile'],
+    summary: 'Get portfolio settings',
+    description: 'Retrieves the portfolio settings of the authenticated user.',
+    security: [{ bearerAuth: [] }],
+    responses: {
+      200: {
+        description: 'Portfolio settings retrieved successfully.',
+        content: {
+          'application/json': {
+            schema: z.object({
+              success: z.boolean().openapi({ example: true }),
+              message: z.string().openapi({ example: 'Portfolio settings retrieved successfully.' }),
+              data: portfolioSettingsSchema,
+            }),
+          },
+        },
+      },
+      401: {
+        description: 'Unauthorized',
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: 'put',
+    path: '/api/v1/profile/portfolio-settings',
+    tags: ['Profile'],
+    summary: 'Update portfolio settings',
+    description: 'Updates the portfolio settings of the authenticated user.',
+    security: [{ bearerAuth: [] }],
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: updatePortfolioSettingsSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Portfolio settings updated successfully.',
+        content: {
+          'application/json': {
+            schema: z.object({
+              success: z.boolean().openapi({ example: true }),
+              message: z.string().openapi({ example: 'Portfolio settings updated successfully.' }),
+              data: portfolioSettingsSchema,
+            }),
+          },
+        },
+      },
+      401: {
+        description: 'Unauthorized',
       },
     },
   });

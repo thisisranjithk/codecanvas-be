@@ -1,7 +1,7 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
 
-import { loginSchema, registerSchema } from './auth.schema.js';
+import { loginSchema, registerSchema, changePasswordSchema, deleteAccountSchema } from './auth.schema.js';
 
 export function registerAuthDocs(registry: OpenAPIRegistry) {
   const userSchema = z.object({
@@ -107,6 +107,70 @@ export function registerAuthDocs(registry: OpenAPIRegistry) {
               data: z.object({
                 user: userSchema,
               }),
+            }),
+          },
+        },
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: 'put',
+    path: '/api/v1/auth/change-password',
+    operationId: 'changePassword',
+    summary: 'Change Password',
+    description: 'Change the password of the authenticated user.',
+    tags: ['Auth'],
+    security: [{ bearerAuth: [] }],
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: changePasswordSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Password changed successfully',
+        content: {
+          'application/json': {
+            schema: z.object({
+              success: z.boolean(),
+              message: z.string(),
+            }),
+          },
+        },
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: 'delete',
+    path: '/api/v1/auth/account',
+    operationId: 'deleteAccount',
+    summary: 'Delete Account',
+    description: 'Permanently delete the authenticated user account and all associated data.',
+    tags: ['Auth'],
+    security: [{ bearerAuth: [] }],
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: deleteAccountSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Account deleted successfully',
+        content: {
+          'application/json': {
+            schema: z.object({
+              success: z.boolean(),
+              message: z.string(),
             }),
           },
         },
