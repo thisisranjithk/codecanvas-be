@@ -14,7 +14,7 @@ app.disable('x-powered-by');
 
 app.use(
   cors({
-    origin: ['http://localhost:5173'],
+    origin: [env.FRONTEND_URL],
     credentials: true,
   }),
 );

@@ -26,6 +26,7 @@ export const env = {
   CLOUDINARY_API_KEY: getRequiredEnv('CLOUDINARY_API_KEY'),
   CLOUDINARY_API_SECRET: getRequiredEnv('CLOUDINARY_API_SECRET'),
   CLOUDINARY_URL: getRequiredEnv('CLOUDINARY_URL'),
+  FRONTEND_URL: getRequiredEnv('FRONTEND_URL'),
 } as const;
 
 export type Env = typeof env;
