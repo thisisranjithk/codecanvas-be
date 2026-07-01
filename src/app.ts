@@ -22,17 +22,17 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-if (env.NODE_ENV === 'development') {
-  app.use(
-    '/api-docs',
-    swaggerUi.serve,
-    swaggerUi.setup(generateOpenAPI(), {
-      swaggerOptions: {
-        deepLinking: false,
-      },
-    }),
-  );
-}
+// if (env.NODE_ENV === 'development') {
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(generateOpenAPI(), {
+    swaggerOptions: {
+      deepLinking: false,
+    },
+  }),
+);
+// }
 
 app.use('/api/v1', routes);
 
