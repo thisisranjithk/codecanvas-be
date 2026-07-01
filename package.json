@@ -1,7 +1,7 @@
 {
-  "name": "portfolio-cms-api",
+  "name": "codecanvas",
   "version": "1.0.0",
-  "description": "Production-ready backend API for managing portfolio content through a secure CMS",
+  "description": "CodeCanvas is an production-ready backend API for managing portfolio content through a secure CMS",
   "type": "module",
   "engines": {
     "node": ">=20.0.0"
