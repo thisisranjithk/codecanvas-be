@@ -57,6 +57,8 @@ model User {
   educations Education[]
   certifications Certification[]
   blogs      Blog[]
+  refreshToken String?
+  refreshTokenExpiresAt DateTime?
 }
 
 model Profile {

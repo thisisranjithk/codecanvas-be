@@ -2,6 +2,8 @@ import cors from 'cors';
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
 
+import cookieParser from 'cookie-parser';
+
 import { env } from './config/index.js';
 import { generateOpenAPI } from './config/swagger.js';
 import { errorHandler } from './shared/errors/index.js';
@@ -21,6 +23,7 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // if (env.NODE_ENV === 'development') {
 app.use(

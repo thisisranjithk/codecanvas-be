@@ -89,6 +89,53 @@ export function registerAuthDocs(registry: OpenAPIRegistry) {
   });
 
   registry.registerPath({
+    method: 'post',
+    path: '/api/v1/auth/refresh',
+    operationId: 'refreshAuthToken',
+    summary: 'Refresh Token',
+    description: 'Refresh the access token using the HttpOnly refresh token cookie.',
+    tags: ['Auth'],
+    responses: {
+      200: {
+        description: 'Token refreshed successfully',
+        content: {
+          'application/json': {
+            schema: z.object({
+              success: z.boolean(),
+              message: z.string(),
+              data: z.object({
+                accessToken: z.string(),
+              }),
+            }),
+          },
+        },
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: 'post',
+    path: '/api/v1/auth/logout',
+    operationId: 'logoutUser',
+    summary: 'Logout User',
+    description: 'Logout the user and clear the refresh token cookie.',
+    tags: ['Auth'],
+    responses: {
+      200: {
+        description: 'Logged out successfully',
+        content: {
+          'application/json': {
+            schema: z.object({
+              success: z.boolean(),
+              message: z.string(),
+            }),
+          },
+        },
+      },
+    },
+  });
+
+  registry.registerPath({
     method: 'get',
     path: '/api/v1/auth/me',
     operationId: 'getCurrentUser',

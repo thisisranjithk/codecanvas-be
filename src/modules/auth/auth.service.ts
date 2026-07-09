@@ -1,9 +1,9 @@
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 
 import { env, prisma } from '../../config/index.js';
 import { ConflictError, NotFoundError, UnauthorizedError } from '../../shared/errors/index.js';
 import type { PublicUser } from '../../shared/types/index.js';
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../../shared/utils/index.js';
 import type { LoginInput, RegisterInput, ChangePasswordInput } from './auth.schema.js';
 
 const BCRYPT_SALT_ROUNDS = 12;
@@ -19,19 +19,7 @@ const userPublicSelect = {
   updatedAt: true,
 } as const;
 
-function signAccessToken(user: Pick<PublicUser, 'id' | 'email' | 'role'>): string {
-  return jwt.sign(
-    {
-      sub: user.id,
-      email: user.email,
-      role: user.role,
-    },
-    env.JWT_ACCESS_SECRET,
-    {
-      expiresIn: env.JWT_ACCESS_EXPIRES_IN,
-    } as jwt.SignOptions,
-  );
-}
+
 
 export async function register(input: RegisterInput): Promise<PublicUser> {
     const existingEmail = await prisma.user.findUnique({
@@ -63,7 +51,7 @@ export async function register(input: RegisterInput): Promise<PublicUser> {
     });
   }
 
-export async function login(input: LoginInput): Promise<{ user: PublicUser; accessToken: string }> {
+export async function login(input: LoginInput): Promise<{ user: PublicUser; accessToken: string; refreshToken: string }> {
     const user = await prisma.user.findUnique({
       where: { email: input.email },
     });
@@ -87,9 +75,32 @@ export async function login(input: LoginInput): Promise<{ user: PublicUser; acce
       throw new UnauthorizedError('Invalid email or password.');
     }
 
+    const accessToken = generateAccessToken(publicUser);
+    const refreshToken = generateRefreshToken(user.id);
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, BCRYPT_SALT_ROUNDS);
+    
+    const match = env.JWT_REFRESH_EXPIRES_IN.match(/^(\d+)([smhd])$/);
+    let ms = 7 * 24 * 60 * 60 * 1000;
+    if (match) {
+      const val = parseInt(match[1] as string, 10);
+      if (match[2] === 's') ms = val * 1000;
+      if (match[2] === 'm') ms = val * 60 * 1000;
+      if (match[2] === 'h') ms = val * 60 * 60 * 1000;
+      if (match[2] === 'd') ms = val * 24 * 60 * 60 * 1000;
+    }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        refreshToken: hashedRefreshToken,
+        refreshTokenExpiresAt: new Date(Date.now() + ms),
+      },
+    });
+
     return {
       user: publicUser,
-      accessToken: signAccessToken(publicUser),
+      accessToken,
+      refreshToken,
     };
   }
 
@@ -129,10 +140,12 @@ export async function changePassword(userId: string, input: ChangePasswordInput)
 
     await prisma.user.update({
       where: { id: userId },
-      data: { password: hashedPassword },
+      data: { 
+        password: hashedPassword,
+        refreshToken: null,
+        refreshTokenExpiresAt: null,
+      },
     });
-    
-    // Invalidate refresh tokens is not applicable as they don't exist in schema
   }
 
 export async function verifyPassword(userId: string, password: string): Promise<void> {
@@ -149,3 +162,71 @@ export async function verifyPassword(userId: string, password: string): Promise<
       throw new UnauthorizedError('Invalid password.');
     }
   }
+
+export async function refresh(token: string): Promise<{ accessToken: string; refreshToken: string }> {
+  try {
+    const payload = verifyRefreshToken(token);
+    
+    const user = await prisma.user.findUnique({
+      where: { id: payload.sub },
+    });
+
+    if (!user || !user.isActive || !user.refreshToken) {
+      throw new UnauthorizedError('Invalid refresh token.');
+    }
+
+    if (user.refreshTokenExpiresAt && user.refreshTokenExpiresAt < new Date()) {
+      throw new UnauthorizedError('Refresh token expired.');
+    }
+
+    const isValid = await bcrypt.compare(token, user.refreshToken as string);
+    if (!isValid) {
+      throw new UnauthorizedError('Invalid refresh token.');
+    }
+
+    const publicUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: userPublicSelect,
+    });
+
+    if (!publicUser) {
+      throw new UnauthorizedError('User not found.');
+    }
+
+    const accessToken = generateAccessToken(publicUser);
+    const refreshToken = generateRefreshToken(user.id);
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, BCRYPT_SALT_ROUNDS);
+    
+    const match = env.JWT_REFRESH_EXPIRES_IN.match(/^(\d+)([smhd])$/);
+    let ms = 7 * 24 * 60 * 60 * 1000;
+    if (match) {
+      const val = parseInt(match[1] as string, 10);
+      if (match[2] === 's') ms = val * 1000;
+      if (match[2] === 'm') ms = val * 60 * 1000;
+      if (match[2] === 'h') ms = val * 60 * 60 * 1000;
+      if (match[2] === 'd') ms = val * 24 * 60 * 60 * 1000;
+    }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        refreshToken: hashedRefreshToken,
+        refreshTokenExpiresAt: new Date(Date.now() + ms),
+      },
+    });
+
+    return { accessToken, refreshToken };
+  } catch (_error) {
+    throw new UnauthorizedError('Invalid or expired refresh token.');
+  }
+}
+
+export async function logout(userId: string): Promise<void> {
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      refreshToken: null,
+      refreshTokenExpiresAt: null,
+    },
+  });
+}
