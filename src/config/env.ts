@@ -32,6 +32,7 @@ export const env = {
   CLOUDINARY_API_SECRET: getRequiredEnv('CLOUDINARY_API_SECRET'),
   CLOUDINARY_URL: getRequiredEnv('CLOUDINARY_URL'),
   FRONTEND_URL: getRequiredEnv('FRONTEND_URL'),
+  DEV_FRONTEND_URL: getOptionalEnv('DEV_FRONTEND_URL', 'http://localhost:5173'),
 } as const;
 
 export type Env = typeof env;

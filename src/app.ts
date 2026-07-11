@@ -34,7 +34,7 @@ app.use(limiter);
 
 app.use(
   cors({
-    origin: [env.FRONTEND_URL],
+    origin: [env.FRONTEND_URL, env.DEV_FRONTEND_URL].filter(Boolean),
     credentials: true,
   }),
 );
