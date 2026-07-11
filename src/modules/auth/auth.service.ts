@@ -179,7 +179,7 @@ export async function refresh(token: string): Promise<{ accessToken: string; ref
       throw new UnauthorizedError('Refresh token expired.');
     }
 
-    const isValid = await bcrypt.compare(token, user.refreshToken as string);
+    const isValid = await bcrypt.compare(token, user.refreshToken);
     if (!isValid) {
       throw new UnauthorizedError('Invalid refresh token.');
     }
@@ -216,7 +216,7 @@ export async function refresh(token: string): Promise<{ accessToken: string; ref
     });
 
     return { accessToken, refreshToken };
-  } catch (_error) {
+  } catch {
     throw new UnauthorizedError('Invalid or expired refresh token.');
   }
 }

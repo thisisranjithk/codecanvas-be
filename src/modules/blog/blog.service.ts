@@ -80,8 +80,8 @@ export const getBlogs = async (userId: string, query: ListBlogsQueryInput) => {
 
   const where = queryResult.where;
   const orderBy = queryResult.orderBy;
-  const skip = queryResult.skip as number;
-  const take = queryResult.take as number;
+  const skip = queryResult.skip;
+  const take = queryResult.take;
 
   // Extend search to tags if search is provided
   if (search) {

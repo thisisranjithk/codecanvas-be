@@ -82,7 +82,8 @@ export const logoutHandler = asyncHandler(async (req: Request, res: Response) =>
     try {
       const payload = verifyRefreshToken(token);
       await authService.logout(payload.sub);
-    } catch (_error) {
+    } catch {
+      // ignore token verification errors on logout
     }
   }
 

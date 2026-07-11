@@ -14,7 +14,7 @@ export class QueryBuilder {
   /**
    * Build Prisma query options based on standard pagination query, search fields, and additional filters
    */
-  static build<T extends Record<string, any>>(
+  static build<T extends Record<string, unknown>>(
     query: PaginationQuery,
     searchFields: string[] = [],
     filters: T = {} as T
@@ -23,7 +23,7 @@ export class QueryBuilder {
     const skip = (page - 1) * limit;
     const take = limit;
 
-    const where: any = { ...filters };
+    const where: Record<string, unknown> & { OR?: Record<string, unknown>[] } = { ...filters };
 
     if (search && searchFields.length > 0) {
       where.OR = searchFields.map((field) => ({
@@ -34,8 +34,8 @@ export class QueryBuilder {
       }));
     }
 
-    const orderBy = {
-      [sortBy]: sortOrder,
+    const orderBy: Record<string, 'asc' | 'desc'> = {
+      [sortBy]: sortOrder as 'asc' | 'desc',
     };
 
     return {
